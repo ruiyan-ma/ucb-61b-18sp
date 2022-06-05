@@ -91,7 +91,7 @@ public class LinkedListDeque<T> implements Deque<T> {
     DNode head, tail;
 
     /**
-     * The number of items in the deque
+     * The number of items in the deque.
      */
     int size;
 
