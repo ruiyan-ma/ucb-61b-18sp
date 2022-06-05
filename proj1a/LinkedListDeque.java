@@ -35,8 +35,8 @@ public class LinkedListDeque<T> {
         DNode node = head.next;
         while (node != tail) {
             System.out.print(node.item + " ");
+            node = node.next;
         }
-        System.out.println();
     }
 
     public T removeFirst() {
@@ -64,28 +64,45 @@ public class LinkedListDeque<T> {
     }
 
     public T get(int index) {
-        DNode node = head.next;
-
-        for (int i = 0; i < index && node != tail; i++) {
-            node = node.next;
+        if (index >= size) {
+            return null;
         }
 
-        if (node != tail) {
+        DNode node = head;
+        for (int i = 0; i <= index; i++) {
+            node = node.next;
+        }
+        return node.item;
+    }
+
+    /**
+     * Same as get, but uses recursion.
+     */
+    public T getRecursive(int index) {
+        if (index >= size) {
+            return null;
+        }
+        return getRecursiveHelper(head.next, index);
+    }
+
+    private T getRecursiveHelper(DNode node, int index) {
+        if (index == 0) {
             return node.item;
         } else {
-            return null;
+            return getRecursiveHelper(node.next, index - 1);
         }
     }
 
     /**
      * The sentinel node
      */
-    DNode head, tail;
+    private final DNode head;
+    private final DNode tail;
 
     /**
      * The number of items in the deque.
      */
-    int size;
+    private int size;
 
     /**
      * The nested class Node.

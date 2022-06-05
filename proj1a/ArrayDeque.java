@@ -18,10 +18,6 @@ public class ArrayDeque<T> {
     }
 
     public void addFirst(T item) {
-        if (size == arr.length - 1) {
-            doubleSize();
-        }
-
         if (size == 0) {
             arr[0] = item;
             first = 0;
@@ -31,13 +27,12 @@ public class ArrayDeque<T> {
         }
 
         size += 1;
-    }
-
-    public void addLast(T item) {
         if (size == arr.length - 1) {
             doubleSize();
         }
+    }
 
+    public void addLast(T item) {
         if (size == 0) {
             arr[0] = item;
             first = 0;
@@ -47,6 +42,9 @@ public class ArrayDeque<T> {
         }
 
         size += 1;
+        if (size == arr.length - 1) {
+            doubleSize();
+        }
     }
 
     public boolean isEmpty() {
@@ -62,7 +60,6 @@ public class ArrayDeque<T> {
             int index = (first + i) % arr.length;
             System.out.print(arr[index] + " ");
         }
-        System.out.println();
     }
 
     public T removeFirst() {
