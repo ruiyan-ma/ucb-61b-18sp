@@ -1,5 +1,3 @@
-import java.lang.reflect.Array;
-
 /**
  * A deque implemented using circular array.
  *
@@ -110,27 +108,10 @@ public class ArrayDeque<T> {
     }
 
     /**
-     * Return true if two ArrayDeques are equal.
-     */
-    public boolean equal(ArrayDeque<T> deque) {
-        if (size != deque.size) {
-            return false;
-        }
-
-        for (int i = 0; i < size; ++i) {
-            if (!get(i).equals(deque.get(i))) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Double the size of the circular array.
      */
     private void doubleSize() {
-        arr = copy((T[]) new Object[size * 2]);
+        arr = copy((T[]) new Object[arr.length * 2]);
         first = 0;
     }
 
@@ -138,7 +119,7 @@ public class ArrayDeque<T> {
      * Half the size of the circular array.
      */
     private void halfSize() {
-        arr = copy((T[]) new Object[size / 2]);
+        arr = copy((T[]) new Object[arr.length / 2]);
         first = 0;
     }
 
