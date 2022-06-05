@@ -25,8 +25,14 @@ public class ArrayDeque<T> implements Deque<T> {
             doubleSize();
         }
 
-        first = (first - 1 + arr.length) % arr.length;
-        arr[first] = item;
+        if (size == 0) {
+            arr[0] = item;
+            first = 0;
+        } else {
+            first = (first - 1 + arr.length) % arr.length;
+            arr[first] = item;
+        }
+
         size += 1;
     }
 
@@ -36,8 +42,14 @@ public class ArrayDeque<T> implements Deque<T> {
             doubleSize();
         }
 
-        last = (last + 1) % arr.length;
-        arr[last] = item;
+        if (size == 0) {
+            arr[0] = item;
+            first = 0;
+        } else {
+            int index = (first + size) % arr.length;
+            arr[index] = item;
+        }
+
         size += 1;
     }
 
@@ -71,7 +83,8 @@ public class ArrayDeque<T> implements Deque<T> {
         first = (first + 1) % arr.length;
         size -= 1;
 
-        if ((double) size / arr.length < 0.25) {
+        double loadFactor = (double) size / arr.length;
+        if (loadFactor < 0.25 && arr.length > 10) {
             halfSize();
         }
 
@@ -84,9 +97,9 @@ public class ArrayDeque<T> implements Deque<T> {
             return null;
         }
 
+        int last = (first + size - 1) % arr.length;
         T removed = arr[last];
         arr[last] = null;
-        last = (last - 1 + arr.length) % arr.length;
         size -= 1;
 
         if ((double) size / arr.length < 0.25) {
@@ -110,7 +123,6 @@ public class ArrayDeque<T> implements Deque<T> {
     private void doubleSize() {
         arr = copy((T[]) new Object[size * 2]);
         first = 0;
-        last = size - 1;
     }
 
     /**
@@ -119,10 +131,11 @@ public class ArrayDeque<T> implements Deque<T> {
     private void halfSize() {
         arr = copy((T[]) new Object[size / 2]);
         first = 0;
-        last = size - 1;
     }
 
-    /** Copy arr into the given new array. */
+    /**
+     * Copy arr into the given new array.
+     */
     private T[] copy(T[] newArr) {
         for (int i = 0; i < size; i++) {
             int index = (first + i) % arr.length;
@@ -139,12 +152,7 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * The first index of the circular array.
      */
-    int first = 1;
-
-    /**
-     * The last index of the circular array.
-     */
-    int last = -1;
+    int first;
 
     /**
      * The number of items in this deque.
