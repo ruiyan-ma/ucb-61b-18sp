@@ -1,5 +1,3 @@
-import java.lang.reflect.Array;
-
 /**
  * A deque implemented using circular array.
  *
@@ -11,7 +9,7 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * Constructor
      */
-    ArrayDeque() {
+    public ArrayDeque() {
         arr = (T[]) new Object[10];
     }
 
@@ -147,15 +145,15 @@ public class ArrayDeque<T> implements Deque<T> {
     /**
      * The circular array.
      */
-    T[] arr;
+    private T[] arr;
 
     /**
      * The first index of the circular array.
      */
-    int first;
+    private int first;
 
     /**
      * The number of items in this deque.
      */
-    int size = 0;
+    private int size = 0;
 }
