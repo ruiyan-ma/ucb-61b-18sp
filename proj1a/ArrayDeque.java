@@ -4,7 +4,7 @@
  * @author ruiyan ma
  */
 
-public class ArrayDeque<T> implements Deque<T> {
+public class ArrayDeque<T> {
 
     /**
      * Constructor
@@ -17,7 +17,6 @@ public class ArrayDeque<T> implements Deque<T> {
         arr = (T[]) new Object[size];
     }
 
-    @Override
     public void addFirst(T item) {
         if (size == arr.length - 1) {
             doubleSize();
@@ -34,7 +33,6 @@ public class ArrayDeque<T> implements Deque<T> {
         size += 1;
     }
 
-    @Override
     public void addLast(T item) {
         if (size == arr.length - 1) {
             doubleSize();
@@ -51,17 +49,14 @@ public class ArrayDeque<T> implements Deque<T> {
         size += 1;
     }
 
-    @Override
     public boolean isEmpty() {
         return size == 0;
     }
 
-    @Override
     public int size() {
         return size;
     }
 
-    @Override
     public void printDeque() {
         for (int i = 0; i < size; i++) {
             int index = (first + i) % arr.length;
@@ -70,7 +65,6 @@ public class ArrayDeque<T> implements Deque<T> {
         System.out.println();
     }
 
-    @Override
     public T removeFirst() {
         if (size == 0) {
             return null;
@@ -89,7 +83,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return removed;
     }
 
-    @Override
     public T removeLast() {
         if (size == 0) {
             return null;
@@ -107,7 +100,6 @@ public class ArrayDeque<T> implements Deque<T> {
         return removed;
     }
 
-    @Override
     public T get(int index) {
         if (index >= size) {
             return null;
