@@ -1,15 +1,14 @@
-import java.lang.Math;
-
 public class Planet {
 
-    /** Gravitational constant. */
-    public static final double G = 6.67e-11;
+    /**
+     * Gravitational constant.
+     */
+    private static final double G = 6.67e-11;
 
     /**
      * First constructor.
      */
-    public Planet(double xP, double yP, double xV, double yV,
-                  double m, String img) {
+    public Planet(double xP, double yP, double xV, double yV, double m, String img) {
         xxPos = xP;
         yyPos = yP;
         xxVel = xV;
@@ -56,8 +55,8 @@ public class Planet {
     }
 
     /**
-    * Calculate the force exerted in the Y direction.
-    */
+     * Calculate the force exerted in the Y direction.
+     */
     public double calcForceExertedByY(Planet planet) {
         double dy = planet.yyPos - yyPos;
         return calcForceExertedBy(planet) * dy / calcDistance(planet);
@@ -91,7 +90,7 @@ public class Planet {
 
     /**
      *
-     * */
+     */
     public void update(double dt, double fX, double fY) {
         // 1. Calculate the acceleration using the provided x and y force.
         double xAcc = fX / mass;
@@ -109,26 +108,38 @@ public class Planet {
 
     /**
      * Draw the Body's image at the Body's position.
-     * */
+     */
     public void draw() {
         StdDraw.picture(xxPos, yyPos, "images/" + imgFileName);
     }
 
-    /** Its current x position. */
+    /**
+     * Its current x position.
+     */
     public double xxPos;
 
-    /** Its current y position. */
+    /**
+     * Its current y position.
+     */
     public double yyPos;
 
-    /** Its current velocity in the x direction. */
+    /**
+     * Its current velocity in the x direction.
+     */
     public double xxVel;
 
-    /** Its current velocity in the y direction. */
+    /**
+     * Its current velocity in the y direction.
+     */
     public double yyVel;
 
-    /**  Its mass. */
+    /**
+     * Its mass.
+     */
     public double mass;
 
-    /** The name of the file that corresponds to the image that depicts the body. */
+    /**
+     * The name of the file that corresponds to the image that depicts the body.
+     */
     public String imgFileName;
 }

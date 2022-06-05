@@ -2,7 +2,7 @@ public class NBody {
 
     /**
      * Read the radius of the universe in the given file.
-     * */
+     */
     public static double readRadius(String file) {
         In in = new In(file);
         int planetNum = in.readInt();
@@ -13,7 +13,7 @@ public class NBody {
     /**
      * Given a file name, returns an array of Planets
      * corresponding to the planets in the file.
-     * */
+     */
     public static Planet[] readPlanets(String file) {
         In in = new In(file);
         int planetNum = in.readInt();
@@ -66,7 +66,7 @@ public class NBody {
                 yForces[i] = planets[i].calcNetForceExertedByY(planets);
             }
 
-            // Call update on each of the Planets.
+            // Call update method on each of the Planets.
             for (int i = 0; i < planets.length; i++) {
                 planets[i].update(dt, xForces[i], yForces[i]);
             }
@@ -74,8 +74,10 @@ public class NBody {
             // Draw the background image
             StdDraw.picture(0, 0, "images/starfield.jpg");
 
-            // Draw all of the Planets
-            for (Planet body : planets) body.draw();
+            // Draw all Planets
+            for (Planet body : planets) {
+                body.draw();
+            }
 
             // Show the offscreen buffer and pause the animation for 10 milliseconds
             StdDraw.show();
@@ -88,10 +90,10 @@ public class NBody {
         // Print out the final state of the universe
         StdOut.println(planets.length);
         StdOut.println(r);
-        for (int i = 0; i < planets.length; i++) {
+        for (Planet planet : planets) {
             StdOut.printf("%11.4e %11.4e %11.4e %11.4e %11.4e %12s\n",
-                          planets[i].xxPos, planets[i].yyPos, planets[i].xxVel,
-                          planets[i].yyVel, planets[i].mass, planets[i].imgFileName);
+                    planet.xxPos, planet.yyPos, planet.xxVel, planet.yyVel,
+                    planet.mass, planet.imgFileName);
         }
     }
 }
