@@ -1,3 +1,5 @@
+import java.lang.reflect.Array;
+
 /**
  * A deque implemented using circular array.
  *
@@ -10,11 +12,13 @@ public class ArrayDeque<T> {
      * Constructor
      */
     public ArrayDeque() {
-        arr = (T[]) new Object[10];
+        this.arr = (T[]) new Object[10];
+        this.size = 0;
     }
 
     ArrayDeque(int size) {
-        arr = (T[]) new Object[size];
+        this.arr = (T[]) new Object[size];
+        this.size = 0;
     }
 
     public void addFirst(T item) {
@@ -90,7 +94,8 @@ public class ArrayDeque<T> {
         arr[last] = null;
         size -= 1;
 
-        if ((double) size / arr.length < 0.25) {
+        double loadFactor = (double) size / arr.length;
+        if (loadFactor < 0.25 && arr.length > 10) {
             halfSize();
         }
 
@@ -102,6 +107,23 @@ public class ArrayDeque<T> {
             return null;
         }
         return arr[(first + index) % arr.length];
+    }
+
+    /**
+     * Return true if two ArrayDeques are equal.
+     */
+    public boolean equal(ArrayDeque<T> deque) {
+        if (size != deque.size) {
+            return false;
+        }
+
+        for (int i = 0; i < size; ++i) {
+            if (!get(i).equals(deque.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -144,5 +166,5 @@ public class ArrayDeque<T> {
     /**
      * The number of items in this deque.
      */
-    private int size = 0;
+    private int size;
 }
