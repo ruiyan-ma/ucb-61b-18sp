@@ -26,7 +26,7 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
         return size;
     }
 
-    /** Removes all of the mappings from this map. */
+    /** Removes all mappings from this map. */
     @Override
     public void clear() {
         size = 0;
@@ -121,7 +121,6 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
             cur = cur.next;
             return ret;
         }
-
 
         /** Stores the current key-value pair. */
         private Entry cur;

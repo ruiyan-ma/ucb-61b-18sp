@@ -25,7 +25,7 @@ public class TestBSTMap {
     //assumes put/size/containsKey/get work
     @Test
     public void sanityClearTest() {
-        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
+        BSTMap<String, Integer> b = new BSTMap<>();
         for (int i = 0; i < 455; i++) {
             b.put("hi" + i, 1 + i);
             //make sure put is working via containsKey and get
