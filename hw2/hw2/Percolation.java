@@ -14,7 +14,8 @@ public class Percolation {
         this.N = N;
         openCount = 0;
         opened = new boolean[N][N];
-        unionFind = new WeightedQuickUnionUF(N * N + 2);
+        percolateUF = new WeightedQuickUnionUF(N * N + 2);
+        fullUF = new WeightedQuickUnionUF(N * N + 1);
     }
 
     /**
@@ -57,18 +58,20 @@ public class Percolation {
                         && newCol >= 0 && newCol < N
                         && isOpen(newRow, newCol)) {
                     int newIndex = convertTo1D(newRow, newCol);
-                    unionFind.union(index, newIndex);
+                    percolateUF.union(index, newIndex);
+                    fullUF.union(index, newIndex);
                 }
             }
 
             // if row == 0, connect it with the virtual top site.
             if (row == 0) {
-                unionFind.union(index, 0);
+                percolateUF.union(index, 0);
+                fullUF.union(index, 0);
             }
 
             // if row == N - 1, connect it  with the virtual bottom site.
             if (row == N - 1) {
-                unionFind.union(index, N * N + 1);
+                percolateUF.union(index, N * N + 1);
             }
         }
     }
@@ -87,7 +90,7 @@ public class Percolation {
     public boolean isFull(int row, int col) {
         checkBounds(row, col);
         int index = convertTo1D(row, col);
-        return unionFind.connected(index, 0);
+        return fullUF.connected(index, 0);
     }
 
     /**
@@ -101,7 +104,11 @@ public class Percolation {
      * Does the system percolate?
      */
     public boolean percolates() {
-        return unionFind.connected(0, N * N + 1);
+        return percolateUF.connected(0, N * N + 1);
+    }
+
+    public static void main(String[] args) {
+
     }
 
     /**
@@ -124,7 +131,14 @@ public class Percolation {
      * <p>
      * The first cell is the virtual top site, the last cell is the virtual bottom site.
      */
-    private final WeightedQuickUnionUF unionFind;
+    private final WeightedQuickUnionUF percolateUF;
+
+    /**
+     * (N * N + 1) 1D union find structure to record is full information.
+     * <p>
+     * The first cell is the virtual top site, no virtual bottom site here.
+     */
+    private final WeightedQuickUnionUF fullUF;
 
     /**
      * 4 directions of a site.
