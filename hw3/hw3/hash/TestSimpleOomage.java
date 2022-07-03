@@ -1,6 +1,5 @@
 package hw3.hash;
 
-import edu.princeton.cs.algs4.In;
 import org.junit.Test;
 
 
@@ -58,7 +57,7 @@ public class TestSimpleOomage {
         assertTrue(hashSet.contains(ooA2));
     }
 
-    /* TODO: Uncomment this test after you finish haveNiceHashCodeSpread in OomageTestUtility */
+    /* Uncomment this test after you finish haveNiceHashCodeSpread in OomageTestUtility */
     @Test
     public void testRandomOomagesHashCodeSpread() {
         List<Oomage> oomages = new ArrayList<>();
