@@ -184,7 +184,7 @@ public class HexWorld {
         TETile[][] world = new TETile[WIDTH][HEIGHT];
         fillWithNothing(world);
 
-        Position pos = new Position(10, 15);
+        Position pos = new Position(15, 15);
         draw19Hexagons(world, pos, 3);
         renderer.renderFrame(world);
     }
