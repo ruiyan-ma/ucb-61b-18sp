@@ -50,9 +50,11 @@ public class Board {
 
     /**
      * Create hallways for a room, and return the hallways list.
+     *
+     * @param room: the given room.
      */
-    private List<Room> createHallways(Room room, int limit) {
-        int hallwayNum = RandomUtils.uniform(random, 1, limit);
+    private List<Room> createHallways(Room room) {
+        int hallwayNum = RandomUtils.uniform(random, 1, room.maxHallway());
         List<Room> hallways = new ArrayList<>(hallwayNum);
 
         for (int i = 0; i < hallwayNum; ++i) {
@@ -65,66 +67,73 @@ public class Board {
         return hallways;
     }
 
+    /**
+     * Get the tile on the given position.
+     */
     private TETile getTile(Position p) {
         return grid[p.x][p.y];
     }
 
+    /**
+     * Set tile for given position.
+     */
     private void setTile(Position p, TETile tile) {
         grid[p.x][p.y] = tile;
     }
 
+    /**
+     * Check tile type for a given position.
+     */
     private boolean isTile(Position p, TETile tile) {
         return getTile(p).equals(tile);
     }
 
+    /**
+     * Return true if this tile is nothing.
+     */
     private boolean isNothing(Position p) {
         return isTile(p, Tileset.NOTHING);
     }
 
+    /**
+     * Return true if this tile is floor.
+     */
     private boolean isFloor(Position p) {
         return isTile(p, Tileset.FLOOR);
     }
 
+    /**
+     * Return true if this tile is wall.
+     */
     private boolean isWall(Position p) {
         return isTile(p, Tileset.WALL);
     }
 
+    /**
+     * Return true if we enter into the floor area.
+     */
     private void checkEnter(Position curr, Position next) {
         if (isNothing(curr) && isFloor(next)) {
             setTile(curr, Tileset.WALL);
         }
     }
 
+    /**
+     * Return true if we leave the floor area.
+     */
     private void checkLeave(Position curr, Position next) {
         if (isFloor(curr) && isNothing(next)) {
             setTile(next, Tileset.WALL);
         }
     }
 
+    /**
+     * Check in bound.
+     */
     private boolean inBound(Position p) {
         int x = p.x, y = p.y;
         return x >= 0 && x < WIDTH
                 && y >= 0 && y < HEIGHT;
-    }
-
-    private void fillWall(Position p) {
-        int x = p.x, y = p.y;
-        Position left = new Position(x - 1, y),
-                right = new Position(x + 1, y),
-                up = new Position(x, y + 1),
-                down = new Position(x, y - 1);
-
-        if (inBound(left) && isNothing(left)
-                && inBound(right) && isNothing(right)) {
-            setTile(left, Tileset.WALL);
-            setTile(right, Tileset.WALL);
-        }
-
-        if (inBound(up) && isNothing(up)
-                && inBound(down) && isNothing(down)) {
-            setTile(up, Tileset.WALL);
-            setTile(down, Tileset.WALL);
-        }
     }
 
     /**
@@ -152,15 +161,6 @@ public class Board {
                 checkLeave(curr, next);
             }
         }
-
-        for (int i = 0; i < WIDTH; ++i) {
-            for (int j = 0; j < HEIGHT; ++j) {
-                Position curr = new Position(i, j);
-                if (isWall(curr)) {
-                    fillWall(curr);
-                }
-            }
-        }
     }
 
     /**
@@ -169,12 +169,12 @@ public class Board {
     public void createWorld() {
         List<Room> rooms = createRooms();
         for (Room room : rooms) {
-            List<Room> hallways = createHallways(room, 4);
+            List<Room> hallways = createHallways(room);
             Room hallway = hallways.get(random.nextInt(hallways.size()));
-            createHallways(hallway, 2);
+            createHallways(hallway);
         }
 
-        createWall();
+//        createWall();
     }
 
     Random random;

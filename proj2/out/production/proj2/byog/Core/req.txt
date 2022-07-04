@@ -1,6 +1,0 @@
-- include rooms and hallways
-- rectangular room
-- hallway with L turns
-- a random number of rooms and hallways
-- walls around rooms and hallways
-- rooms and hallways should be connected

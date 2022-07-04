@@ -15,6 +15,8 @@ public class Room {
 
     public static final int MAX_HEIGHT = 15;
 
+    public static final int MAX_HALLWAY = 5;
+
     /**
      * Empty constructor for subclass.
      */
@@ -107,12 +109,35 @@ public class Room {
         }
     }
 
-
     /**
-     * Generate a random connector.
+     * Generate a random connector for this room.
      * */
     public Connector connector(Random random) {
-        return new Connector(random, this);
+        Position pos = new Position(0, 0);
+        Direction dir = Direction.randomDir(random);
+
+        if (dir == Direction.left) {
+            pos.x = left;
+            pos.y = RandomUtils.uniform(random, bottom, top + 1);
+        } else if (dir == Direction.right) {
+            pos.x = right;
+            pos.y = RandomUtils.uniform(random, bottom, top + 1);
+        } else if (dir == Direction.up) {
+            pos.y = top;
+            pos.x = RandomUtils.uniform(random, left, right + 1);
+        } else {
+            pos.y = bottom;
+            pos.x = RandomUtils.uniform(random, left, right + 1);
+        }
+
+        return new Connector(pos, dir);
+    }
+
+    /**
+     * Return the max number of hallway.
+     */
+    public int maxHallway() {
+        return MAX_HALLWAY;
     }
 
     /**
