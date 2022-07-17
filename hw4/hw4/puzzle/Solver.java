@@ -10,15 +10,15 @@ public class Solver {
      */
     public Solver(WorldState initial) {
         MinPQ<SearchNode> queue = new MinPQ<>();
-        Set<WorldState> visited = new HashSet<>();
         SearchNode start = new SearchNode(initial, 0, null);
         queue.insert(start);
+        totalNum = 1;
 
         while (!queue.isEmpty()) {
             SearchNode node = queue.delMin();
-            visited.add(start.worldState);
 
             if (node.worldState.isGoal()) {
+                minNumMove = node.moves;
                 solution = new LinkedList<>();
                 solution.add(node.worldState);
                 while (node.parent != null) {
@@ -29,8 +29,9 @@ public class Solver {
             }
 
             for (WorldState neighbor : node.worldState.neighbors()) {
-                if (!visited.contains(neighbor)) {
+                if (node.parent == null || !node.parent.worldState.equals(neighbor)) {
                     queue.insert(new SearchNode(neighbor, node.moves + 1, node));
+                    totalNum += 1;
                 }
             }
         }
@@ -55,4 +56,6 @@ public class Solver {
     int minNumMove;
 
     List<WorldState> solution;
+
+    int totalNum;
 }
