@@ -2,7 +2,9 @@ package hw4.puzzle;
 
 import edu.princeton.cs.algs4.MinPQ;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+
 
 public class Solver {
     /**
@@ -12,7 +14,6 @@ public class Solver {
         MinPQ<SearchNode> queue = new MinPQ<>();
         SearchNode start = new SearchNode(initial, 0, null);
         queue.insert(start);
-        totalNum = 1;
 
         while (!queue.isEmpty()) {
             SearchNode node = queue.delMin();
@@ -31,7 +32,6 @@ public class Solver {
             for (WorldState neighbor : node.worldState.neighbors()) {
                 if (node.parent == null || !node.parent.worldState.equals(neighbor)) {
                     queue.insert(new SearchNode(neighbor, node.moves + 1, node));
-                    totalNum += 1;
                 }
             }
         }
@@ -53,9 +53,7 @@ public class Solver {
         return solution;
     }
 
-    int minNumMove;
+    private int minNumMove;
 
-    List<WorldState> solution;
-
-    int totalNum;
+    private List<WorldState> solution;
 }
