@@ -34,8 +34,13 @@ public class MergeSort {
     /** Returns a queue of queues that each contain one item from items. */
     private static <Item extends Comparable> Queue<Queue<Item>>
             makeSingleItemQueues(Queue<Item> items) {
-        // Your code here!
-        return null;
+        Queue<Queue<Item>> itemQueue = new Queue<>();
+        for (Item item : items) {
+            Queue<Item> queue = new Queue<>();
+            queue.enqueue(item);
+            itemQueue.enqueue(queue);
+        }
+        return itemQueue;
     }
 
     /**
@@ -53,14 +58,40 @@ public class MergeSort {
      */
     private static <Item extends Comparable> Queue<Item> mergeSortedQueues(
             Queue<Item> q1, Queue<Item> q2) {
-        // Your code here!
-        return null;
+        Queue<Item> sortedQueue = new Queue<>();
+        while (!q1.isEmpty() || !q2.isEmpty()) {
+            sortedQueue.enqueue(getMin(q1, q2));
+        }
+        return sortedQueue;
     }
 
     /** Returns a Queue that contains the given items sorted from least to greatest. */
     public static <Item extends Comparable> Queue<Item> mergeSort(
             Queue<Item> items) {
-        // Your code here!
-        return items;
+        Queue<Queue<Item>> itemQueue = makeSingleItemQueues(items);
+        while (itemQueue.size() > 1) {
+            Queue<Item> q1 = itemQueue.dequeue();
+            Queue<Item> q2 = itemQueue.dequeue();
+            Queue<Item> sortedQueue = mergeSortedQueues(q1, q2);
+            itemQueue.enqueue(sortedQueue);
+        }
+        return itemQueue.dequeue();
+    }
+
+    public static void main(String[] args) {
+        Queue<Integer> nums = new Queue<>();
+        nums.enqueue(5);
+        nums.enqueue(3);
+        nums.enqueue(4);
+        nums.enqueue(2);
+        nums.enqueue(6);
+        nums.enqueue(3);
+
+        System.out.println("Original queue:");;
+        System.out.println(nums);
+
+        Queue<Integer> sortedNums = mergeSort(nums);
+        System.out.println("Sorted queue:");
+        System.out.println(sortedNums);
     }
 }
