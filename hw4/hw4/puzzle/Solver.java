@@ -30,6 +30,7 @@ public class Solver {
             }
 
             for (WorldState neighbor : node.worldState.neighbors()) {
+                // don’t enqueue a neighbor if its world state is the same as parent node
                 if (node.parent == null || !node.parent.worldState.equals(neighbor)) {
                     queue.insert(new SearchNode(neighbor, node.moves + 1, node));
                 }
