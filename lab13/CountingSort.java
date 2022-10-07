@@ -17,7 +17,7 @@ public class CountingSort {
         // find max
         int max = Integer.MIN_VALUE;
         for (int i : arr) {
-            max = max > i ? max : i;
+            max = Math.max(max, i);
         }
 
         // gather all the counts for each value
@@ -29,10 +29,11 @@ public class CountingSort {
         // when we're dealing with ints, we can just put each value
         // count number of times into the new array
         int[] sorted = new int[arr.length];
-        int k = 0;
-        for (int i = 0; i < counts.length; i += 1) {
-            for (int j = 0; j < counts[i]; j += 1, k += 1) {
-                sorted[k] = i;
+        int index = 0;
+        for (int num = 0; num < counts.length; num += 1) {
+            for (int j = 0; j < counts[num]; j += 1) {
+                sorted[index] = num;
+                index += 1;
             }
         }
 
@@ -46,11 +47,10 @@ public class CountingSort {
         }
 
         int[] sorted2 = new int[arr.length];
-        for (int i = 0; i < arr.length; i += 1) {
-            int item = arr[i];
-            int place = starts[item];
-            sorted2[place] = item;
-            starts[item] += 1;
+        for (int num : arr) {
+            int place = starts[num];
+            sorted2[place] = num;
+            starts[num] += 1;
         }
 
         // return the sorted array
@@ -67,6 +67,55 @@ public class CountingSort {
      */
     public static int[] betterCountingSort(int[] arr) {
         // TODO make counting sort work with arrays containing negative numbers.
-        return null;
+        int max = max(arr), min = min(arr);
+        int range = max - min + 1;
+        int[] count = new int[range];
+        int[] indices = new int[range];
+
+        // count 用来对 nums 中的数字进行统计
+        for (int num : arr) {
+            count[num - min] += 1;
+        }
+
+        // indices 用来记录每个数字的起始索引
+        int index = 0;
+        for (int i = 0; i < count.length; i++) {
+            indices[i] = index;
+            index += count[i];
+        }
+
+        int[] result = new int[arr.length];
+        for (int num : arr) {
+            result[indices[num - min]] = num;
+            indices[num - min] += 1;
+        }
+
+        return result;
+    }
+
+    /**
+     * Find the max value of an array.
+     */
+    private static int max(int[] nums) {
+        int max = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > max) {
+                max = nums[i];
+            }
+        }
+        return max;
+    }
+
+    /**
+     * Find the min value of an array.
+     */
+    private static int min(int[] nums) {
+        int min = nums[0];
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < min) {
+                min = nums[i];
+            }
+        }
+        return min;
     }
 }

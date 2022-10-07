@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 /**
  * Class for doing Radix sort
  *
@@ -16,8 +18,21 @@ public class RadixSort {
      * @return String[] the sorted array
      */
     public static String[] sort(String[] asciis) {
-        // TODO: Implement LSD Sort
-        return null;
+        int maxLen = 0;
+        for (String str : asciis) {
+            maxLen = Math.max(maxLen, str.length());
+        }
+
+        String[] result = Arrays.copyOf(asciis, asciis.length);
+
+        // Strings are sorted in dictionary order, i.e. "2" is after "100" because
+        // "2" is considered as "2__" where "_" is a placeholder.
+        // LSD starts from the rightmost character.
+        for (int i = maxLen - 1; i >= 0; --i) {
+            sortHelperLSD(result, i);
+        }
+
+        return result;
     }
 
     /**
@@ -27,8 +42,35 @@ public class RadixSort {
      * @param index The position to sort the Strings on.
      */
     private static void sortHelperLSD(String[] asciis, int index) {
-        // Optional LSD helper method for required LSD radix sort
-        return;
+        String[] result = new String[asciis.length];
+        int[] count = new int[256];
+        int[] indices = new int[256];
+
+        for (String str : asciis) {
+            int c = charAt(str, index);
+            count[c] += 1;
+        }
+
+        int start = 0;
+        for (int i = 0; i < count.length; ++i) {
+            indices[i] = start;
+            start += count[i];
+        }
+
+        for (String str : asciis) {
+            int c = charAt(str, index);
+            result[indices[c]] = str;
+            indices[c] += 1;
+        }
+
+        System.arraycopy(result, 0, asciis, 0, asciis.length);
+    }
+
+    private static int charAt(String s, int index) {
+        if (index < s.length()) {
+            return s.charAt(index);
+        }
+        return 0;
     }
 
     /**
