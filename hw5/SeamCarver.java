@@ -66,9 +66,10 @@ public class SeamCarver {
     }
 
     private double[][] transpose(double[][] arr) {
-        double[][] result = new double[width()][height()];
-        for (int i = 0; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        int m = arr.length, n = arr[0].length;
+        double[][] result = new double[n][m];
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
                 result[j][i] = arr[i][j];
             }
         }
@@ -83,8 +84,7 @@ public class SeamCarver {
     }
 
     private int[] findSeam(double[][] energies) {
-        int m = energies.length;
-        int n = energies[0].length;
+        int m = energies.length, n = energies[0].length;
         for (int i = 1; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
                 double minEnergy = energies[i - 1][j];
@@ -104,11 +104,11 @@ public class SeamCarver {
         int[] columns = new int[m];
         for (int i = m - 1; i >= 0; --i) {
             if (i == m - 1) {
-                columns[i] = minIndex(energies[i], 0, width() - 1);
+                columns[i] = minIndex(energies[i], 0, n - 1);
             } else {
                 columns[i] = minIndex(energies[i],
                         Math.max(0, columns[i + 1] - 1),
-                        Math.min(width() - 1, columns[i + 1] + 1));
+                        Math.min(n - 1, columns[i + 1] + 1));
             }
         }
 
