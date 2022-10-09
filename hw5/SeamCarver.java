@@ -83,11 +83,13 @@ public class SeamCarver {
     }
 
     private int[] findSeam(double[][] energies) {
-        for (int i = 1; i < height(); ++i) {
-            for (int j = 0; j < width(); ++j) {
+        int m = energies.length;
+        int n = energies[0].length;
+        for (int i = 1; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
                 if (j == 0) {
                     energies[i][j] += Math.min(energies[i - 1][j], energies[i - 1][j + 1]);
-                } else if (j == width() - 1) {
+                } else if (j == n - 1) {
                     energies[i][j] += Math.min(energies[i - 1][j - 1], energies[i - 1][j]);
                 } else {
                     energies[i][j] += Math.min(energies[i - 1][j - 1],
@@ -96,9 +98,9 @@ public class SeamCarver {
             }
         }
 
-        int[] columns = new int[height()];
-        for (int i = height() - 1; i >= 0; --i) {
-            if (i == height() - 1) {
+        int[] columns = new int[m];
+        for (int i = m - 1; i >= 0; --i) {
+            if (i == m - 1) {
                 columns[i] = minIndex(energies[i], 0, width() - 1);
             } else {
                 columns[i] = minIndex(energies[i],
