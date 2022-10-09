@@ -87,14 +87,17 @@ public class SeamCarver {
         int n = energies[0].length;
         for (int i = 1; i < m; ++i) {
             for (int j = 0; j < n; ++j) {
-                if (j == 0) {
-                    energies[i][j] += Math.min(energies[i - 1][j], energies[i - 1][j + 1]);
-                } else if (j == n - 1) {
-                    energies[i][j] += Math.min(energies[i - 1][j - 1], energies[i - 1][j]);
-                } else {
-                    energies[i][j] += Math.min(energies[i - 1][j - 1],
-                            Math.min(energies[i - 1][j], energies[i - 1][j + 1]));
+                double minEnergy = energies[i - 1][j];
+
+                if (j > 0) {
+                    minEnergy = Math.min(minEnergy, energies[i - 1][j - 1]);
                 }
+
+                if (j < n - 1) {
+                    minEnergy = Math.min(minEnergy, energies[i - 1][j + 1]);
+                }
+
+                energies[i][j] += minEnergy;
             }
         }
 
