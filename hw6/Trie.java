@@ -1,25 +1,26 @@
 import java.util.HashMap;
 import java.util.Map;
 
-class TrieNode {
-
-    TrieNode() {
-        next = new HashMap<>();
-        isWord = false;
-    }
-
-    /**
-     * Next nodes.
-     */
-    Map<Character, TrieNode> next;
-
-    /**
-     * Whether the current node is a word.
-     */
-    boolean isWord;
-}
 
 public class Trie {
+
+    private static class TrieNode {
+
+        TrieNode() {
+            next = new HashMap<>();
+            isWord = false;
+        }
+
+        /**
+         * Next nodes.
+         */
+        Map<Character, TrieNode> next;
+
+        /**
+         * Whether the current node is a word.
+         */
+        boolean isWord;
+    }
 
     Trie() {
         root = new TrieNode();

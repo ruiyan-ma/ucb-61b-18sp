@@ -44,21 +44,21 @@ public class Boggle {
         m = strings.length;
         n = strings[0].length();
 
-        char[][] board = new char[m][n];
+        char[][] b = new char[m][n];
         for (int i = 0; i < m; ++i) {
-            board[i] = strings[i].toCharArray();
+            b[i] = strings[i].toCharArray();
         }
 
-        return board;
+        return b;
     }
 
     private static Trie buildTrie() {
         String[] words = new In(dictPath).readAllLines();
-        Trie trie = new Trie();
+        Trie t = new Trie();
         for (String word : words) {
-            trie.add(word);
+            t.add(word);
         }
-        return trie;
+        return t;
     }
 
     private static void backtrack(StringBuilder builder, boolean[][] visited, int r, int c) {
@@ -70,7 +70,7 @@ public class Boggle {
         visited[r][c] = true;
 
         String str = builder.toString();
-        if (str.length() >= 3 && trie.findWord(str)) {
+        if (str.length() >= LENGTH && trie.findWord(str)) {
             wordSet.add(str);
             if (wordSet.size() > limit) {
                 wordSet.pollLast();
@@ -96,6 +96,8 @@ public class Boggle {
 
     private static int m, n, limit;
 
+    private static final int LENGTH = 3;
+
     private static int[][] dirs = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
     private static Trie trie;
@@ -103,12 +105,4 @@ public class Boggle {
     private static TreeSet<String> wordSet;
 
     static String dictPath = "words.txt";
-
-    public static void main(String[] args) {
-        long start = System.currentTimeMillis();
-        List<String> res = solve(7, "smallBoard2.txt");
-        long end = System.currentTimeMillis();
-        System.out.println(end - start);
-        System.out.println(res);
-    }
 }
