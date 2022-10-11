@@ -24,9 +24,9 @@ public class Boggle {
         trie = buildTrie();
         wordSet = new TreeSet<>((o1, o2) -> {
             if (o1.length() != o2.length()) {
-                return o1.length() - o2.length();
+                return o2.length() - o1.length();
             } else {
-                return o2.compareTo(o1);
+                return o1.compareTo(o2);
             }
         });
 
@@ -73,7 +73,7 @@ public class Boggle {
         if (str.length() >= 3 && trie.findWord(str)) {
             wordSet.add(str);
             if (wordSet.size() > limit) {
-                wordSet.pollFirst();
+                wordSet.pollLast();
             }
         }
 
