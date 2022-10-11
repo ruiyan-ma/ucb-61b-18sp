@@ -19,28 +19,24 @@ public class Boggle {
             throw new IllegalArgumentException("K should be greater than zero.");
         }
 
+        limit = k;
         board = buildBoard(boardFilePath);
         trie = buildTrie();
-        wordSet = new HashSet<>();
-
-        for (int i = 0; i < m; ++i) {
-            for (int j = 0; j < n; ++j) {
-                StringBuilder builder = new StringBuilder();
-                boolean[][] visited = new boolean[m][n];
-                backtrack(builder, visited, i, j);
-            }
-        }
-
-        List<String> result = new ArrayList<>(wordSet);
-        result.sort((o1, o2) -> {
+        wordSet = new TreeSet<>((o1, o2) -> {
             if (o1.length() != o2.length()) {
-                return o2.length() - o1.length();
+                return o1.length() - o2.length();
             } else {
-                return o1.compareTo(o2);
+                return o2.compareTo(o1);
             }
         });
 
-        return result.subList(0, k);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                backtrack(new StringBuilder(), new boolean[m][n], i, j);
+            }
+        }
+
+        return new ArrayList<>(wordSet);
     }
 
     private static char[][] buildBoard(String boardFilePath) {
@@ -76,6 +72,9 @@ public class Boggle {
         String str = builder.toString();
         if (str.length() >= 3 && trie.findWord(str)) {
             wordSet.add(str);
+            if (wordSet.size() > limit) {
+                wordSet.pollFirst();
+            }
         }
 
         for (int[] dir : dirs) {
@@ -95,19 +94,19 @@ public class Boggle {
 
     private static char[][] board;
 
-    private static int m, n;
+    private static int m, n, limit;
 
     private static int[][] dirs = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
 
     private static Trie trie;
 
-    private static Set<String> wordSet;
+    private static TreeSet<String> wordSet;
 
-    private static String dictPath = "words.txt";
+    static String dictPath = "words.txt";
 
     public static void main(String[] args) {
         long start = System.currentTimeMillis();
-        List<String> res = solve(7, "exampleBoard.txt");
+        List<String> res = solve(7, "smallBoard2.txt");
         long end = System.currentTimeMillis();
         System.out.println(end - start);
         System.out.println(res);
