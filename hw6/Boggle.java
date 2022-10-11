@@ -1,22 +1,115 @@
-import java.util.List;
+import java.util.*;
+
+import edu.princeton.cs.algs4.In;
 
 public class Boggle {
-    
-    // File path of dictionary file
-    static String dictPath = "words.txt";
 
     /**
      * Solves a Boggle puzzle.
-     * 
-     * @param k The maximum number of words to return.
+     *
+     * @param k             The maximum number of words to return.
      * @param boardFilePath The file path to Boggle board file.
      * @return a list of words found in given Boggle board.
-     *         The Strings are sorted in descending order of length.
-     *         If multiple words have the same length,
-     *         have them in ascending alphabetical order.
+     * The Strings are sorted in descending order of length.
+     * If multiple words have the same length,
+     * have them in ascending alphabetical order.
      */
     public static List<String> solve(int k, String boardFilePath) {
-        // YOUR CODE HERE
-        return null;
+        if (k <= 0) {
+            throw new IllegalArgumentException("K should be greater than zero.");
+        }
+
+        board = buildBoard(boardFilePath);
+        trie = buildTrie();
+        wordSet = new HashSet<>();
+
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < n; ++j) {
+                StringBuilder builder = new StringBuilder();
+                boolean[][] visited = new boolean[m][n];
+                backtrack(builder, visited, i, j);
+            }
+        }
+
+        List<String> result = new ArrayList<>(wordSet);
+        result.sort((o1, o2) -> {
+            if (o1.length() != o2.length()) {
+                return o2.length() - o1.length();
+            } else {
+                return o1.compareTo(o2);
+            }
+        });
+
+        return result.subList(0, k);
+    }
+
+    private static char[][] buildBoard(String boardFilePath) {
+        String[] strings = new In(boardFilePath).readAllLines();
+        m = strings.length;
+        n = strings[0].length();
+
+        char[][] board = new char[m][n];
+        for (int i = 0; i < m; ++i) {
+            board[i] = strings[i].toCharArray();
+        }
+
+        return board;
+    }
+
+    private static Trie buildTrie() {
+        String[] words = new In(dictPath).readAllLines();
+        Trie trie = new Trie();
+        for (String word : words) {
+            trie.add(word);
+        }
+        return trie;
+    }
+
+    private static void backtrack(StringBuilder builder, boolean[][] visited, int r, int c) {
+        if (!inBound(r, c) || visited[r][c] || !trie.findPrefix(builder.toString())) {
+            return;
+        }
+
+        builder.append(board[r][c]);
+        visited[r][c] = true;
+
+        String str = builder.toString();
+        if (str.length() >= 3 && trie.findWord(str)) {
+            wordSet.add(str);
+        }
+
+        for (int[] dir : dirs) {
+            int row = r + dir[0];
+            int col = c + dir[1];
+            backtrack(builder, visited, row, col);
+        }
+
+        // backtrack
+        builder.deleteCharAt(builder.length() - 1);
+        visited[r][c] = false;
+    }
+
+    private static boolean inBound(int r, int c) {
+        return r >= 0 && r < m && c >= 0 && c < n;
+    }
+
+    private static char[][] board;
+
+    private static int m, n;
+
+    private static int[][] dirs = {{0, 1}, {1, 1}, {1, 0}, {1, -1}, {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}};
+
+    private static Trie trie;
+
+    private static Set<String> wordSet;
+
+    private static String dictPath = "words.txt";
+
+    public static void main(String[] args) {
+        long start = System.currentTimeMillis();
+        List<String> res = solve(7, "exampleBoard.txt");
+        long end = System.currentTimeMillis();
+        System.out.println(end - start);
+        System.out.println(res);
     }
 }
