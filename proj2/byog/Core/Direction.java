@@ -4,17 +4,20 @@ package byog.Core;
 import java.util.Random;
 
 public enum Direction {
+    /**
+     * Four directions.
+     */
     left, right, up, down;
 
     /**
      * Return the reverse direction.
      */
     public static Direction reverse(Direction dir) {
-        if (dir == Direction.left) {
+        if (dir == left) {
             return right;
-        } else if (dir == Direction.right) {
+        } else if (dir == right) {
             return left;
-        } else if (dir == Direction.up) {
+        } else if (dir == up) {
             return down;
         } else {
             return up;

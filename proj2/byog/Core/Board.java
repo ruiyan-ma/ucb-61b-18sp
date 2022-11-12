@@ -4,15 +4,21 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Board {
 
     public static final int WIDTH = 50;
 
     public static final int HEIGHT = 50;
+
+    public static final int MIN_ROOM_NUM = 40;
+
+    public static final int MAX_ROOM_NUM = 100;
+
+    public static final double ROOM_RATIO = 0.4;
+
+    public static final int MAX_RANDOM_TRY = 20;
 
     Board(Random rand) {
         random = rand;
@@ -30,152 +36,101 @@ public class Board {
         }
     }
 
-    /**
-     * Create rooms, and return the room list.
-     */
-    private List<Room> createRooms() {
-        int roomNum = RandomUtils.uniform(random, 15, 30);
-        List<Room> newRooms = new ArrayList<>(roomNum);
-
-        while (newRooms.size() < roomNum) {
-            Room room = new Room(random, WIDTH, HEIGHT);
-            if (room.noOverlap(newRooms)) {
-                room.drawRoom(grid);
-                newRooms.add(room);
-            }
-        }
-
-        return newRooms;
-    }
-
-    /**
-     * Create hallways for a room, and return the hallways list.
-     *
-     * @param room: the given room.
-     */
-    private List<Room> createHallways(Room room) {
-        int hallwayNum = RandomUtils.uniform(random, 1, room.maxHallway());
-        List<Room> hallways = new ArrayList<>(hallwayNum);
-
-        for (int i = 0; i < hallwayNum; ++i) {
-            Connector connector = room.connector(random);
-            Hallway hallway = new Hallway(random, connector, WIDTH, HEIGHT);
-            hallway.drawRoom(grid);
-            hallways.add(hallway);
-        }
-
-        return hallways;
-    }
-
-    /**
-     * Get the tile on the given position.
-     */
-    private TETile getTile(Position p) {
-        return grid[p.x][p.y];
-    }
-
-    /**
-     * Set tile for given position.
-     */
-    private void setTile(Position p, TETile tile) {
-        grid[p.x][p.y] = tile;
-    }
-
-    /**
-     * Check tile type for a given position.
-     */
-    private boolean isTile(Position p, TETile tile) {
-        return getTile(p).equals(tile);
-    }
-
-    /**
-     * Return true if this tile is nothing.
-     */
-    private boolean isNothing(Position p) {
-        return isTile(p, Tileset.NOTHING);
-    }
-
-    /**
-     * Return true if this tile is floor.
-     */
-    private boolean isFloor(Position p) {
-        return isTile(p, Tileset.FLOOR);
-    }
-
-    /**
-     * Return true if this tile is wall.
-     */
-    private boolean isWall(Position p) {
-        return isTile(p, Tileset.WALL);
-    }
-
-    /**
-     * Return true if we enter into the floor area.
-     */
-    private void checkEnter(Position curr, Position next) {
-        if (isNothing(curr) && isFloor(next)) {
-            setTile(curr, Tileset.WALL);
-        }
-    }
-
-    /**
-     * Return true if we leave the floor area.
-     */
-    private void checkLeave(Position curr, Position next) {
-        if (isFloor(curr) && isNothing(next)) {
-            setTile(next, Tileset.WALL);
-        }
-    }
-
-    /**
-     * Check in bound.
-     */
-    private boolean inBound(Position p) {
-        int x = p.x, y = p.y;
-        return x >= 0 && x < WIDTH
-                && y >= 0 && y < HEIGHT;
-    }
-
-    /**
-     * Create wall.
-     */
-    private void createWall() {
-        // Scan from left to right
-        for (int j = 0; j < HEIGHT; ++j) {
-            for (int i = 0; i < WIDTH - 1; ++i) {
-                Position curr = new Position(i, j);
-                Position next = new Position(i + 1, j);
-
-                checkEnter(curr, next);
-                checkLeave(curr, next);
-            }
-        }
-
-        // Scan from bottom to tp
-        for (int i = 0; i < WIDTH; ++i) {
-            for (int j = 0; j < HEIGHT - 1; ++j) {
-                Position curr = new Position(i, j);
-                Position next = new Position(i, j + 1);
-
-                checkEnter(curr, next);
-                checkLeave(curr, next);
-            }
-        }
-    }
+//    private void debugRender(Room room) {
+//        room.drawRoom(grid);
+//        renderer.renderFrame(grid);
+//        renderer.renderFrame(grid);
+//    }
 
     /**
      * Create the world.
      */
     public void createWorld() {
-        List<Room> rooms = createRooms();
-        for (Room room : rooms) {
-            List<Room> hallways = createHallways(room);
-            Room hallway = hallways.get(random.nextInt(hallways.size()));
-            createHallways(hallway);
+        int roomNum = RandomUtils.uniform(random, MIN_ROOM_NUM, MAX_ROOM_NUM);
+        List<Room> roomList = new ArrayList<>(roomNum);
+
+        Room root = new Room(random, WIDTH, HEIGHT);
+        roomList.add(root);
+//        debugRender(root);
+
+        Queue<Connector> queue = new LinkedList<>(root.connectors);
+        while (!queue.isEmpty()) {
+            Connector connector = queue.poll();
+
+            // randomly choose to generate room or hallway
+            Room room;
+            double ratio = RandomUtils.uniform(random);
+            if (ratio <= ROOM_RATIO) {
+                room = generateRoom(random, connector, roomList);
+            } else {
+                room = generateHallway(random, connector, roomList);
+            }
+
+            if (room != null) {
+                Room connectSpace = new Room(connector);
+
+//                debugRender(connectSpace);
+//                debugRender(room);
+
+                roomList.add(room);
+                roomList.add(connectSpace);
+                if (roomList.size() < roomNum) {
+                    queue.addAll(room.connectors);
+                }
+            }
         }
 
-//        createWall();
+        // draw room
+        for (Room room : roomList) {
+            room.drawRoom(grid);
+        }
+
+        // draw wall
+        for (Room room : roomList) {
+            room.drawWall(grid);
+        }
+
+//        System.out.println("room number: " + roomList.size());
     }
+
+    /**
+     * Randomly generate a new room.
+     */
+    private Room generateRoom(Random random, Connector connector, List<Room> rooms) {
+        int tryTime = 0;
+        Room room = new Room(random, connector, WIDTH, HEIGHT);
+
+        while (room.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
+            room = new Room(random, connector, WIDTH, HEIGHT);
+            tryTime += 1;
+        }
+
+        if (tryTime < MAX_RANDOM_TRY) {
+            return room;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Randomly generate a new hallway.
+     */
+    private Room generateHallway(Random random, Connector connector, List<Room> rooms) {
+        int tryTime = 0;
+        Room hallway = new Hallway(random, connector, WIDTH, HEIGHT);
+
+        while (hallway.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
+            hallway = new Hallway(random, connector, WIDTH, HEIGHT);
+            tryTime += 1;
+        }
+
+        if (tryTime < MAX_RANDOM_TRY) {
+            return hallway;
+        } else {
+            return null;
+        }
+    }
+
 
     Random random;
 
@@ -184,9 +139,10 @@ public class Board {
      */
     TETile[][] grid;
 
+    public static TERenderer renderer;
 
     public static void main(String[] args) {
-        TERenderer renderer = new TERenderer();
+        renderer = new TERenderer();
         Board board = new Board(new Random());
         renderer.initialize(WIDTH, HEIGHT);
 

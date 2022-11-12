@@ -1,7 +1,5 @@
 package byog.Core;
 
-import java.util.Random;
-
 public class Connector {
 
     Connector(Position pos, Direction dir) {
@@ -9,7 +7,22 @@ public class Connector {
         this.dir = dir;
     }
 
+    public String toString() {
+        return "Connector(" + pos.toString() + ", " + dir + ")\n";
+    }
+
+    /**
+     * The position of this connector.
+     */
     Position pos;
 
+    /**
+     * The growth direction of this connector.
+     */
     Direction dir;
+
+    /**
+     * Record whether this connector has connected to another room.
+     */
+    boolean connected;
 }
