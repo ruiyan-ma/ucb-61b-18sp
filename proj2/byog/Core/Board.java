@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Board {
 
-    public static final double ROOM_RATIO = 0.3;
+    public static final double ROOM_RATIO = 0.5;
 
     public static final int MAX_RANDOM_TRY = 10;
 
@@ -60,9 +60,8 @@ public class Board {
             }
 
             if (room != null) {
-                Room connectSpace = new Room(connector);
+                roomList.add(connector);
                 roomList.add(room);
-                roomList.add(connectSpace);
                 queue.addAll(room.connectors);
             }
         }

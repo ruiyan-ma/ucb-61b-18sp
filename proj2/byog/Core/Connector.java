@@ -1,8 +1,9 @@
 package byog.Core;
 
-public class Connector {
+public class Connector extends Room {
 
     Connector(Position pos, Direction dir) {
+        super(pos);
         this.pos = pos;
         this.dir = dir;
     }

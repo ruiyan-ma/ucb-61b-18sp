@@ -3,7 +3,9 @@ package byog.Core;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Room class.
@@ -21,18 +23,17 @@ public class Room {
     public static final int MAX_CONNECTOR = 6;
 
     /**
-     * Convert a connector into a room so that this connector can be drawn on the board.
+     * Generate a room for the given position.
      */
-    Room(Connector connector) {
-        left = right = connector.pos.x;
-        top = bottom = connector.pos.y;
+    Room(Position pos) {
+        left = right = pos.x;
+        top = bottom = pos.y;
     }
 
     /**
      * Generate a random sized room.
-     * <p>
-     * All rooms should be at least 1 space away from the bound of
-     * the game board.
+     * First randomly generate a center point, then generate the width and the height.
+     * All rooms should be at least 1 space away from the bound of the game board.
      *
      * @param random:      used to generate random size.
      * @param boardWidth:  the width of the game board.
@@ -55,9 +56,8 @@ public class Room {
 
     /**
      * Generate a random sized room with the given connector.
-     * <p>
-     * All rooms should be at least 1 space away from the bound of
-     * the game board.
+     * The new generated room should not overlap with the given connector.
+     * All rooms should be at least 1 space away from the bound of the game board.
      *
      * @param random:      used to generate random size.
      * @param connector:   the given connector.
@@ -151,17 +151,14 @@ public class Room {
 
     /**
      * Generate connectors for this room.
+     * All connectors should not overlap with the current room.
      */
     protected void setConnectors(Random random, int minNum, int maxNum, int boardWidth, int boardHeight) {
         int num = RandomUtils.uniform(random, minNum, maxNum + 1);
         connectors = new ArrayList<>(num);
 
-        Direction prev = null;
         for (int i = 0; i < num; ++i) {
-            Direction dir = Direction.randomDir(random);
-            while (prev != null && dir == prev) {
-                dir = Direction.randomDir(random);
-            }
+            Direction dir = Direction.intToDirection(i);
 
             int x, y;
             if (dir == Direction.left) {
@@ -180,7 +177,6 @@ public class Room {
 
             if (inBound(x, boardWidth) && inBound(y, boardHeight)) {
                 connectors.add(new Connector(new Position(x, y), dir));
-                prev = dir;
             }
         }
     }

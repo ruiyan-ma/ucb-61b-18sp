@@ -10,16 +10,15 @@ public enum Direction {
     left, right, up, down;
 
     /**
-     * Generate a random direction.
+     * Convert an integer value into a direction.
      */
-    public static Direction randomDir(Random random) {
-        int randInt = random.nextInt(4);
-
-        if (randInt == 0) {
+    public static Direction intToDirection(int value) {
+        value %= 4;
+        if (value == 0) {
             return left;
-        } else if (randInt == 1) {
+        } else if (value == 1) {
             return right;
-        } else if (randInt == 2) {
+        } else if (value == 2) {
             return up;
         } else {
             return down;
