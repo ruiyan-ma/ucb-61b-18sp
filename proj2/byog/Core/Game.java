@@ -3,8 +3,11 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 
+import java.util.Random;
+
 public class Game {
     TERenderer ter = new TERenderer();
+
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
@@ -24,6 +27,7 @@ public class Game {
      * world. However, the behavior is slightly different. After playing with "n123sss:q", the game
      * should save, and thus if we then called playWithInputString with the string "l", we'd expect
      * to get the exact same world back again, since this corresponds to loading the saved game.
+     *
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
@@ -32,7 +36,51 @@ public class Game {
         // and return a 2D tile representation of the world that would have been
         // drawn if the same inputs had been given to playWithKeyboard().
 
-        TETile[][] finalWorldFrame = null;
+        TETile[][] finalWorldFrame;
+
+        Board board = setBoard(input);
+        handleOperations(input);
+        saveGame(input);
+
+        finalWorldFrame = board.getGrid();
         return finalWorldFrame;
+    }
+
+    private Board setBoard(String input) {
+        Board board = null;
+        if (input.charAt(0) == 'n') {
+            int endIndex = input.indexOf("s");
+            long seed = Long.parseLong(input.substring(1, endIndex));
+            board = new Board(new Random(seed), WIDTH, HEIGHT);
+        } else if (input.charAt(0) == 'l') {
+            // load game
+        } else {
+            // throw exceptions
+        }
+
+        return board;
+    }
+
+    private void handleOperations(String input) {
+        int start = Math.max(input.indexOf('s'), input.indexOf('l')) + 1;
+        for (int i = start; i < input.length(); ++i) {
+            if (input.charAt(i) == 'w') {
+
+            } else if (input.charAt(i) == 'a') {
+
+            } else if (input.charAt(i) == 's') {
+
+            } else if (input.charAt(i) == 'd') {
+
+            } else {
+                return;
+            }
+        }
+    }
+
+    private void saveGame(String input) {
+        if (input.indexOf(":Q") > 0) {
+            // save game
+        }
     }
 }

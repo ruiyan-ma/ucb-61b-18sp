@@ -21,8 +21,4 @@ public class Connector {
      */
     Direction dir;
 
-    /**
-     * Record whether this connector has connected to another room.
-     */
-    boolean connected;
 }

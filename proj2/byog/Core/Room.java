@@ -21,7 +21,7 @@ public class Room {
     public static final int MAX_CONNECTOR = 6;
 
     /**
-     * Convert a connector into a room so that this connector can be drawn on board.
+     * Convert a connector into a room so that this connector can be drawn on the board.
      */
     Room(Connector connector) {
         left = right = connector.pos.x;
