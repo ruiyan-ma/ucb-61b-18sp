@@ -6,45 +6,30 @@ import byog.TileEngine.Tileset;
 
 import java.util.*;
 
+import static byog.Core.Game.HEIGHT;
+import static byog.Core.Game.WIDTH;
+
 public class World {
 
     public static final double ROOM_RATIO = 0.5;
 
     public static final int MAX_RANDOM_TRY = 10;
 
-    World(Random rand, int w, int h) {
-        random = rand;
-        width = w;
-        height = h;
-        board = new TETile[width][height];
+    World(long seed) {
+        random = new Random(seed);
+        board = new TETile[WIDTH][HEIGHT];
 
         fillWithNothing();
         createWorld();
-    }
-
-    /**
-     * Move the character according to the given input.
-     *
-     * @param move: the given input.
-     */
-    public void move(char move) {
-        if (move == 'a') {
-
-        } else if (move == 'w') {
-
-        } else if (move == 's') {
-
-        } else if (move == 'd') {
-
-        }
+        generatePlayer();
     }
 
     /**
      * Fill the board with nothing.
      */
     private void fillWithNothing() {
-        for (int i = 0; i < width; ++i) {
-            for (int j = 0; j < height; ++j) {
+        for (int i = 0; i < WIDTH; ++i) {
+            for (int j = 0; j < HEIGHT; ++j) {
                 board[i][j] = Tileset.NOTHING;
             }
         }
@@ -56,7 +41,7 @@ public class World {
     private void createWorld() {
         List<Room> roomList = new ArrayList<>();
 
-        Room root = new Room(random, width, height);
+        Room root = new Room(random, WIDTH, HEIGHT);
         roomList.add(root);
 
         Queue<Connector> queue = new LinkedList<>(root.connectors);
@@ -95,10 +80,10 @@ public class World {
      */
     private Room generateRoom(Random random, Connector connector, List<Room> rooms) {
         int tryTime = 0;
-        Room room = new Room(random, connector, width, height);
+        Room room = new Room(random, connector, WIDTH, HEIGHT);
 
         while (room.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
-            room = new Room(random, connector, width, height);
+            room = new Room(random, connector, WIDTH, HEIGHT);
             tryTime += 1;
         }
 
@@ -114,10 +99,10 @@ public class World {
      */
     private Room generateHallway(Random random, Connector connector, List<Room> rooms) {
         int tryTime = 0;
-        Room hallway = new Hallway(random, connector, width, height);
+        Room hallway = new Hallway(random, connector, WIDTH, HEIGHT);
 
         while (hallway.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
-            hallway = new Hallway(random, connector, width, height);
+            hallway = new Hallway(random, connector, WIDTH, HEIGHT);
             tryTime += 1;
         }
 
@@ -129,14 +114,66 @@ public class World {
     }
 
     /**
-     * The width of the board.
+     * Generate player.
      */
-    private final int width;
+    private void generatePlayer() {
+        Position pos = new Position(
+                random.nextInt(WIDTH), random.nextInt(HEIGHT));
+        while (!isFloor(pos)) {
+            pos.x = random.nextInt(WIDTH);
+            pos.y = random.nextInt(HEIGHT);
+        }
+
+        player = pos;
+        board[pos.x][pos.y] = Tileset.PLAYER;
+    }
 
     /**
-     * The height of the board.
+     * Move the player according to the given key.
+     *
+     * @param key: the move key.
      */
-    private final int height;
+    public void movePlayer(char key) {
+        Position target = null;
+        if (key == 'a') {
+            target = new Position(player.x - 1, player.y);
+        } else if (key == 'w') {
+            target = new Position(player.x, player.y + 1);
+        } else if (key == 's') {
+            target = new Position(player.x, player.y - 1);
+        } else if (key == 'd') {
+            target = new Position(player.x + 1, player.y);
+        }
+
+        if (target != null && isFloor(target)) {
+            swapTile(player, target);
+            player = target;
+        }
+    }
+
+    /**
+     * Check whether the tile of the given position is floor.
+     *
+     * @param pos: the given position.
+     * @return true if the tile is floor.
+     */
+    private boolean isFloor(Position pos) {
+        int x = pos.x;
+        int y = pos.y;
+        return x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT && board[x][y].equals(Tileset.FLOOR);
+    }
+
+    /**
+     * Swap the tile of the given two position.
+     *
+     * @param p1: the first position.
+     * @param p2: the second position.
+     */
+    private void swapTile(Position p1, Position p2) {
+        TETile tile = board[p1.x][p1.y];
+        board[p1.x][p1.y] = board[p2.x][p2.y];
+        board[p2.x][p2.y] = tile;
+    }
 
     /**
      * The random object we will use to generate the world.
@@ -148,10 +185,16 @@ public class World {
      */
     TETile[][] board;
 
+    /**
+     * The position of player.
+     */
+    Position player;
+
     public static void main(String[] args) {
         TERenderer renderer;
         renderer = new TERenderer();
-        World world = new World(new Random(), 50, 50);
+        Random rand = new Random();
+        World world = new World(rand.nextInt());
         renderer.initialize(50, 50);
         renderer.renderFrame(world.board);
     }
