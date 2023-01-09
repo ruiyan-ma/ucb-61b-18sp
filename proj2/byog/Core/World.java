@@ -6,24 +6,37 @@ import byog.TileEngine.Tileset;
 
 import java.util.*;
 
-public class Board {
+public class World {
 
     public static final double ROOM_RATIO = 0.5;
 
     public static final int MAX_RANDOM_TRY = 10;
 
-    Board(Random rand, int w, int h) {
+    World(Random rand, int w, int h) {
         random = rand;
         width = w;
         height = h;
-        grid = new TETile[width][height];
+        board = new TETile[width][height];
 
         fillWithNothing();
         createWorld();
     }
 
-    public TETile[][] getGrid() {
-        return grid;
+    /**
+     * Move the character according to the given input.
+     *
+     * @param move: the given input.
+     */
+    public void move(char move) {
+        if (move == 'a') {
+
+        } else if (move == 'w') {
+
+        } else if (move == 's') {
+
+        } else if (move == 'd') {
+
+        }
     }
 
     /**
@@ -32,7 +45,7 @@ public class Board {
     private void fillWithNothing() {
         for (int i = 0; i < width; ++i) {
             for (int j = 0; j < height; ++j) {
-                grid[i][j] = Tileset.NOTHING;
+                board[i][j] = Tileset.NOTHING;
             }
         }
     }
@@ -68,12 +81,12 @@ public class Board {
 
         // draw room
         for (Room room : roomList) {
-            room.drawRoom(grid);
+            room.drawRoom(board);
         }
 
         // draw wall
         for (Room room : roomList) {
-            room.drawWall(grid);
+            room.drawWall(board);
         }
     }
 
@@ -133,13 +146,13 @@ public class Board {
     /**
      * The grid.
      */
-    private final TETile[][] grid;
+    TETile[][] board;
 
     public static void main(String[] args) {
         TERenderer renderer;
         renderer = new TERenderer();
-        Board board = new Board(new Random(), 50, 50);
+        World world = new World(new Random(), 50, 50);
         renderer.initialize(50, 50);
-        renderer.renderFrame(board.grid);
+        renderer.renderFrame(world.board);
     }
 }
