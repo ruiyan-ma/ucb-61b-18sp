@@ -20,10 +20,11 @@ public class Position implements Serializable {
             return true;
         }
 
-        if (!(obj instanceof Position pos)) {
+        if (!(obj instanceof Position)) {
             return false;
         }
 
+        Position pos = (Position) obj;
         return pos.x == x && pos.y == y;
     }
 

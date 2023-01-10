@@ -33,6 +33,7 @@ public class Game {
             System.exit(0);
         }
 
+        assert world != null;
         playGame(world);
     }
 
