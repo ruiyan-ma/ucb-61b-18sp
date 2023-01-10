@@ -5,6 +5,7 @@ import byog.TileEngine.TETile;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.io.*;
 
 public class Game {
     TERenderer ter = new TERenderer();
@@ -13,6 +14,7 @@ public class Game {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
     public static final int MARGIN = 5;
+    public static final String FILE_NAME = ".game_status";
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -137,8 +139,10 @@ public class Game {
 
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
-        String tileInfo = world.board[x][y].description();
-        StdDraw.textLeft(0, 29, tileInfo);
+        if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
+            String tileInfo = world.board[x][y].description();
+            StdDraw.textLeft(0, 29, tileInfo);
+        }
 
         StdDraw.enableDoubleBuffering();
         StdDraw.show();
@@ -218,7 +222,22 @@ public class Game {
      * @return the loaded world.
      */
     private World loadGame() {
-        return null;
+        File file = new File(FILE_NAME);
+        if (file.exists()) {
+            try {
+                FileInputStream fs = new FileInputStream(file);
+                ObjectInputStream os = new ObjectInputStream(fs);
+                World world = (World) os.readObject();
+                os.close();
+                return world;
+            } catch (IOException | ClassNotFoundException e) {
+                System.out.println(e);
+                System.exit(1);
+            }
+        }
+
+        // In the case no World has been saved yet, we return a new one.
+        return new World();
     }
 
     /**
@@ -227,6 +246,19 @@ public class Game {
      * @param world: the world.
      */
     private void saveGame(World world) {
+        File file = new File(FILE_NAME);
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            FileOutputStream fs = new FileOutputStream(file);
+            ObjectOutputStream os = new ObjectOutputStream(fs);
+            os.writeObject(world);
+            os.close();
+        } catch (IOException e) {
+            System.out.println(e);
+            System.exit(1);
+        }
     }
 
 

@@ -4,15 +4,25 @@ import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
 
+import java.io.Serializable;
 import java.util.*;
 
 import static byog.Core.Game.HEIGHT;
 import static byog.Core.Game.WIDTH;
 import static byog.Core.Room.ROOM_TYPE;
 
-public class World {
+public class World implements Serializable {
 
     public static final int MAX_RANDOM_TRY = 5;
+
+    World() {
+        random = new Random();
+        board = new TETile[WIDTH][HEIGHT];
+
+        fillWithNothing();
+        createWorld();
+        generatePlayer();
+    }
 
     World(long seed) {
         random = new Random(seed);
@@ -131,13 +141,13 @@ public class World {
      */
     public void movePlayer(char key) {
         Position target = null;
-        if (key == 'a') {
+        if (key == 'a' || key == 'h') {
             target = new Position(player.x - 1, player.y);
-        } else if (key == 'w') {
+        } else if (key == 'w' || key == 'k') {
             target = new Position(player.x, player.y + 1);
-        } else if (key == 's') {
+        } else if (key == 's' || key == 'j') {
             target = new Position(player.x, player.y - 1);
-        } else if (key == 'd') {
+        } else if (key == 'd' || key == 'l') {
             target = new Position(player.x + 1, player.y);
         }
 
