@@ -14,7 +14,7 @@ public class Game {
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
     public static final int MARGIN = 5;
-    public static final String FILE_NAME = ".game_status";
+    public static final String FILE_NAME = "game_status.txt";
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
