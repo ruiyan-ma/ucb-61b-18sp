@@ -1,11 +1,11 @@
 package byog.Core;
 
-public class Connector extends Room {
+public class Connector {
 
-    Connector(Position pos, Direction dir) {
-        super(pos);
+    Connector(Position pos, Direction dir, int type) {
         this.pos = pos;
         this.dir = dir;
+        this.nextType = type;
     }
 
     public String toString() {
@@ -22,4 +22,8 @@ public class Connector extends Room {
      */
     Direction dir;
 
+    /**
+     * The type of the next room.
+     */
+    int nextType;
 }

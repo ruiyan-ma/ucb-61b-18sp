@@ -1,8 +1,6 @@
 package byog.Core;
 
 
-import java.util.Random;
-
 public enum Direction {
     /**
      * Four directions.
@@ -10,18 +8,22 @@ public enum Direction {
     left, right, up, down;
 
     /**
-     * Convert an integer value into a direction.
+     * Reverse the given direction.
+     *
+     * @param direction: the given direction.
+     * @return: the reversed direction.
      */
-    public static Direction intToDirection(int value) {
-        value %= 4;
-        if (value == 0) {
-            return left;
-        } else if (value == 1) {
+    public static Direction reverse(Direction direction) {
+        if (direction == left) {
             return right;
-        } else if (value == 2) {
-            return up;
-        } else {
+        } else if (direction == right) {
+            return left;
+        } else if (direction == up) {
             return down;
+        } else if (direction == down) {
+            return up;
         }
+
+        return null;
     }
 }

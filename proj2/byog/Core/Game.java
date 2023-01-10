@@ -2,7 +2,7 @@ package byog.Core;
 
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
-import edu.princeton.cs.algs4.StdDraw;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
 
@@ -12,6 +12,7 @@ public class Game {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 30;
+    public static final int MARGIN = 5;
 
     /**
      * Method used for playing a fresh game. The game should start from the main menu.
@@ -99,53 +100,54 @@ public class Game {
         return Long.parseLong(builder.toString());
     }
 
+    /**
+     * Play the game.
+     *
+     * @param world: the world.
+     */
     private void playGame(World world) {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world.board);
-//        showTileInfo(world);
 
+        char prevKey = ' ';
         while (true) {
+            headsUpDisplay(world);
             if (StdDraw.hasNextKeyTyped()) {
                 char key = Character.toLowerCase(StdDraw.nextKeyTyped());
-                if (key == ':') {
-                    while (true) {
-                        if (StdDraw.hasNextKeyTyped()) {
-                            char exit = Character.toLowerCase(StdDraw.nextKeyTyped());
-                            if (exit == 'q') {
-//                                saveWorld(board);
-                                System.exit(0);
-                            } else {
-                                break;
-                            }
-                        }
+
+                if (prevKey == ':') {
+                    if (key == 'q') {
+                        saveGame(world);
+                        System.exit(0);
                     }
+                } else {
+                    world.movePlayer(key);
+                    ter.renderFrame(world.board);
                 }
 
-                world.movePlayer(key);
-                ter.renderFrame(world.board);
-//                showTileInfo(world);
+                prevKey = key;
             }
         }
     }
 
-    public void showTileInfo(World world) {
+    public void headsUpDisplay(World world) {
+        StdDraw.setPenColor(Color.WHITE);
+        Font smallFont = new Font("Monaco", Font.PLAIN, 20);
+        StdDraw.setFont(smallFont);
+
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
-        String text = "";
-        if (x < WIDTH && y < HEIGHT) {
-            text = world.board[x][y].description();
-            StdDraw.setPenColor(Color.white);
-            Font smallFont = new Font("Monaco", Font.PLAIN, 20);
-            StdDraw.setFont(smallFont);
-            StdDraw.textLeft(1, 29, text);
-        }
+        String tileInfo = world.board[x][y].description();
+        StdDraw.textLeft(0, 29, tileInfo);
+
+        StdDraw.enableDoubleBuffering();
         StdDraw.show();
         ter.renderFrame(world.board);
     }
 
     /**
      * Method used for auto-grading and testing the game code. The input string will be a series
-     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The game should
+     * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww"). The game should
      * behave exactly as if the user typed these characters into the game after playing
      * playWithKeyboard. If the string ends in ":q", the same world should be returned as if the
      * string did not end with q. For example "n123sss" and "n123sss:q" should return the same
@@ -164,7 +166,10 @@ public class Game {
         input = input.toLowerCase();
         World board = setUpWorld(input);
         moveByInput(board, input);
-        saveGame(board, input);
+        if (input.indexOf(":q") > 0) {
+            saveGame(board);
+        }
+
         return board.board;
     }
 
@@ -218,13 +223,10 @@ public class Game {
 
     /**
      * Save the game if we need.
+     *
      * @param world: the world.
-     * @param input: the user input.
      */
-    private void saveGame(World world, String input) {
-        if (input.indexOf(":q") > 0) {
-            // save game
-        }
+    private void saveGame(World world) {
     }
 
 

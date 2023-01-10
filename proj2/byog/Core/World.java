@@ -8,12 +8,11 @@ import java.util.*;
 
 import static byog.Core.Game.HEIGHT;
 import static byog.Core.Game.WIDTH;
+import static byog.Core.Room.ROOM_TYPE;
 
 public class World {
 
-    public static final double ROOM_RATIO = 0.5;
-
-    public static final int MAX_RANDOM_TRY = 10;
+    public static final int MAX_RANDOM_TRY = 5;
 
     World(long seed) {
         random = new Random(seed);
@@ -41,26 +40,23 @@ public class World {
     private void createWorld() {
         List<Room> roomList = new ArrayList<>();
 
-        Room root = new Room(random, WIDTH, HEIGHT);
+        Room root = new Room(random);
         roomList.add(root);
 
-        Queue<Connector> queue = new LinkedList<>(root.connectors);
-        while (!queue.isEmpty()) {
-            Connector connector = queue.poll();
+        Queue<Connector> connectors = new LinkedList<>(root.connectors);
+        while (!connectors.isEmpty()) {
+            Connector connector = connectors.poll();
 
-            // randomly choose to generate room or hallway
             Room room;
-            double ratio = RandomUtils.uniform(random);
-            if (ratio <= ROOM_RATIO) {
+            if (connector.nextType == ROOM_TYPE) {
                 room = generateRoom(random, connector, roomList);
             } else {
                 room = generateHallway(random, connector, roomList);
             }
 
             if (room != null) {
-                roomList.add(connector);
                 roomList.add(room);
-                queue.addAll(room.connectors);
+                connectors.addAll(room.connectors);
             }
         }
 
@@ -80,10 +76,10 @@ public class World {
      */
     private Room generateRoom(Random random, Connector connector, List<Room> rooms) {
         int tryTime = 0;
-        Room room = new Room(random, connector, WIDTH, HEIGHT);
+        Room room = new Room(random, connector);
 
         while (room.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
-            room = new Room(random, connector, WIDTH, HEIGHT);
+            room = new Room(random, connector);
             tryTime += 1;
         }
 
@@ -99,10 +95,10 @@ public class World {
      */
     private Room generateHallway(Random random, Connector connector, List<Room> rooms) {
         int tryTime = 0;
-        Room hallway = new Hallway(random, connector, WIDTH, HEIGHT);
+        Room hallway = new Hallway(random, connector);
 
         while (hallway.isOverlap(rooms) && tryTime < MAX_RANDOM_TRY) {
-            hallway = new Hallway(random, connector, WIDTH, HEIGHT);
+            hallway = new Hallway(random, connector);
             tryTime += 1;
         }
 
@@ -195,7 +191,7 @@ public class World {
         renderer = new TERenderer();
         Random rand = new Random();
         World world = new World(rand.nextInt());
-        renderer.initialize(50, 50);
+        renderer.initialize(WIDTH, HEIGHT);
         renderer.renderFrame(world.board);
     }
 }

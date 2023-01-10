@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static byog.Core.Game.*;
+
 /**
  * Room class.
  *
@@ -14,13 +16,13 @@ import java.util.Random;
  */
 public class Room {
 
-    public static final int MIN_LENGTH = 5;
+    public static final int MIN_LENGTH = 3;
 
-    public static final int MAX_LENGTH = 15;
+    public static final int MAX_LENGTH = 10;
 
-    public static final int MIN_CONNECTOR = 3;
+    public static final int ROOM_TYPE = 0;
 
-    public static final int MAX_CONNECTOR = 6;
+    public static final int HALLWAY_TYPE = 1;
 
     /**
      * Generate a room for the given position.
@@ -33,38 +35,33 @@ public class Room {
     /**
      * Generate a random sized room.
      * First randomly generate a center point, then generate the width and the height.
-     * All rooms should be at least 1 space away from the bound of the game board.
+     * All rooms should be at least MARGIN space away from the bound of the game board.
      *
-     * @param random:      used to generate random size.
-     * @param boardWidth:  the width of the game board.
-     * @param boardHeight: the height of the game board.
+     * @param random: used to generate random size.
      */
-    Room(Random random, int boardWidth, int boardHeight) {
+    Room(Random random) {
         Position center = new Position(
-                RandomUtils.uniform(random, 2, boardWidth - 1),
-                RandomUtils.uniform(random, 2, boardHeight - 1));
+                RandomUtils.uniform(random, MARGIN, WIDTH - MARGIN),
+                RandomUtils.uniform(random, MARGIN, HEIGHT - MARGIN));
         int width = RandomUtils.uniform(random, MIN_LENGTH, MAX_LENGTH + 1);
         int height = RandomUtils.uniform(random, MIN_LENGTH, MAX_LENGTH + 1);
 
-        left = inBoundVal(center.x - width / 2, boardWidth);
-        right = inBoundVal(center.x + width / 2, boardWidth);
-        bottom = inBoundVal(center.y - height / 2, boardHeight);
-        top = inBoundVal(center.y + height / 2, boardHeight);
+        left = inBoundVal(center.x - width / 2, WIDTH);
+        right = inBoundVal(center.x + width / 2, WIDTH);
+        bottom = inBoundVal(center.y - height / 2, HEIGHT);
+        top = inBoundVal(center.y + height / 2, HEIGHT);
 
-        setConnectors(random, MIN_CONNECTOR, MAX_CONNECTOR, boardWidth, boardHeight);
+        setConnectors(random);
     }
 
     /**
      * Generate a random sized room with the given connector.
-     * The new generated room should not overlap with the given connector.
-     * All rooms should be at least 1 space away from the bound of the game board.
+     * All rooms should be at least MARGIN space away from the bound of the game board.
      *
-     * @param random:      used to generate random size.
-     * @param connector:   the given connector.
-     * @param boardWidth:  the width of the game board.
-     * @param boardHeight: the height of the game board.
+     * @param random:    used to generate random size.
+     * @param connector: the given connector.
      */
-    Room(Random random, Connector connector, int boardWidth, int boardHeight) {
+    Room(Random random, Connector connector) {
         Position pos = connector.pos;
         Direction dir = connector.dir;
 
@@ -73,38 +70,38 @@ public class Room {
 
         if (dir == Direction.left || dir == Direction.right) {
             if (dir == Direction.left) {
-                right = inBoundVal(pos.x - 1, boardWidth);
-                left = inBoundVal(right - width, boardWidth);
+                right = inBoundVal(pos.x, WIDTH);
+                left = inBoundVal(right - width, WIDTH);
             } else {
-                left = inBoundVal(pos.x + 1, boardWidth);
-                right = inBoundVal(left + width, boardWidth);
+                left = inBoundVal(pos.x, WIDTH);
+                right = inBoundVal(left + width, WIDTH);
             }
 
             int offset = RandomUtils.uniform(random, height);
-            bottom = inBoundVal(pos.y - offset, boardHeight);
-            top = inBoundVal(bottom + height, boardHeight);
+            bottom = inBoundVal(pos.y - offset, HEIGHT);
+            top = inBoundVal(bottom + height, HEIGHT);
         } else {
             if (dir == Direction.up) {
-                bottom = inBoundVal(pos.y + 1, boardHeight);
-                top = inBoundVal(bottom + height, boardHeight);
+                bottom = inBoundVal(pos.y, HEIGHT);
+                top = inBoundVal(bottom + height, HEIGHT);
             } else {
-                top = inBoundVal(pos.y - 1, boardHeight);
-                bottom = inBoundVal(top - height, boardHeight);
+                top = inBoundVal(pos.y, HEIGHT);
+                bottom = inBoundVal(top - height, HEIGHT);
             }
 
             int offset = RandomUtils.uniform(random, width);
-            left = inBoundVal(pos.x - offset, boardWidth);
-            right = inBoundVal(left + width, boardWidth);
+            left = inBoundVal(pos.x - offset, WIDTH);
+            right = inBoundVal(left + width, WIDTH);
         }
 
-        setConnectors(random, MIN_CONNECTOR, MAX_CONNECTOR, boardWidth, boardHeight);
+        setConnectors(random);
     }
 
     /**
      * Check whether the given value is in bound.
      */
     protected boolean inBound(int value, int bound) {
-        return value >= 1 && value <= bound - 2;
+        return value >= MARGIN && value <= bound - MARGIN;
     }
 
     /**
@@ -114,8 +111,8 @@ public class Room {
      * @param bound: the bound
      */
     protected int inBoundVal(int val, int bound) {
-        val = Math.max(1, val);
-        val = Math.min(val, bound - 2);
+        val = Math.max(MARGIN, val);
+        val = Math.min(val, bound - MARGIN);
         return val;
     }
 
@@ -153,13 +150,10 @@ public class Room {
      * Generate connectors for this room.
      * All connectors should not overlap with the current room.
      */
-    protected void setConnectors(Random random, int minNum, int maxNum, int boardWidth, int boardHeight) {
-        int num = RandomUtils.uniform(random, minNum, maxNum + 1);
-        connectors = new ArrayList<>(num);
+    protected void setConnectors(Random random) {
+        connectors = new ArrayList<>();
 
-        for (int i = 0; i < num; ++i) {
-            Direction dir = Direction.intToDirection(i);
-
+        for (Direction dir : Direction.values()) {
             int x, y;
             if (dir == Direction.left) {
                 x = left - 1;
@@ -175,8 +169,8 @@ public class Room {
                 x = RandomUtils.uniform(random, left, right + 1);
             }
 
-            if (inBound(x, boardWidth) && inBound(y, boardHeight)) {
-                connectors.add(new Connector(new Position(x, y), dir));
+            if (inBound(x, WIDTH) && inBound(y, HEIGHT)) {
+                connectors.add(new Connector(new Position(x, y), dir, HALLWAY_TYPE));
             }
         }
     }
