@@ -170,6 +170,7 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
 
         input = input.toLowerCase();
+        System.out.println(input);
         World world = setUpWorld(input);
         moveByInput(world, input);
         if (input.indexOf(":q") > 0) {
