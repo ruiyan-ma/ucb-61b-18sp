@@ -14,6 +14,19 @@ public class Position implements Serializable {
         this.y = y;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Position pos)) {
+            return false;
+        }
+
+        return pos.x == x && pos.y == y;
+    }
+
     public String toString() {
         return "Position(" + x + ", " + y + ")";
     }

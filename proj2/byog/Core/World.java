@@ -3,6 +3,7 @@ package byog.Core;
 import byog.TileEngine.TERenderer;
 import byog.TileEngine.TETile;
 import byog.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.io.Serializable;
 import java.util.*;
@@ -19,24 +20,24 @@ public class World implements Serializable {
         random = new Random();
         board = new TETile[WIDTH][HEIGHT];
 
-        fillWithNothing();
+        fillWithNothing(board);
         createWorld();
-        generatePlayer();
+        generatePlayers();
     }
 
     World(long seed) {
         random = new Random(seed);
         board = new TETile[WIDTH][HEIGHT];
 
-        fillWithNothing();
+        fillWithNothing(board);
         createWorld();
-        generatePlayer();
+        generatePlayers();
     }
 
     /**
      * Fill the board with nothing.
      */
-    private void fillWithNothing() {
+    private void fillWithNothing(TETile[][] board) {
         for (int i = 0; i < WIDTH; ++i) {
             for (int j = 0; j < HEIGHT; ++j) {
                 board[i][j] = Tileset.NOTHING;
@@ -122,16 +123,37 @@ public class World implements Serializable {
     /**
      * Generate player.
      */
-    private void generatePlayer() {
-        Position pos = new Position(
-                random.nextInt(WIDTH), random.nextInt(HEIGHT));
+    private void generatePlayers() {
+        players = new ArrayList<>();
+
+        Position pos1 = randomPosOnFloor();
+        Player player1 = new Player(pos1, 'a', 'd', 'w', 's');
+
+        Position pos2 = randomPosOnFloor();
+        while (pos2.equals(pos1)) {
+            pos2 = randomPosOnFloor();
+        }
+        Player player2 = new Player(pos2, 'h', 'l', 'k', 'j');
+
+        players.add(player1);
+        board[player1.pos.x][player1.pos.y] = Tileset.PLAYER;
+
+        players.add(player2);
+        board[player2.pos.x][player2.pos.y] = Tileset.PLAYER;
+    }
+
+    /**
+     * Generate a random position on floor.
+     *
+     * @return the position.
+     */
+    private Position randomPosOnFloor() {
+        Position pos = new Position(random.nextInt(WIDTH), random.nextInt(HEIGHT));
         while (!isFloor(pos)) {
             pos.x = random.nextInt(WIDTH);
             pos.y = random.nextInt(HEIGHT);
         }
-
-        player = pos;
-        board[pos.x][pos.y] = Tileset.PLAYER;
+        return pos;
     }
 
     /**
@@ -140,20 +162,22 @@ public class World implements Serializable {
      * @param key: the move key.
      */
     public void movePlayer(char key) {
-        Position target = null;
-        if (key == 'a' || key == 'h') {
-            target = new Position(player.x - 1, player.y);
-        } else if (key == 'w' || key == 'k') {
-            target = new Position(player.x, player.y + 1);
-        } else if (key == 's' || key == 'j') {
-            target = new Position(player.x, player.y - 1);
-        } else if (key == 'd' || key == 'l') {
-            target = new Position(player.x + 1, player.y);
-        }
+        for (Player player : players) {
+            Position target = null;
+            if (key == player.left) {
+                target = new Position(player.pos.x - 1, player.pos.y);
+            } else if (key == player.right) {
+                target = new Position(player.pos.x + 1, player.pos.y);
+            } else if (key == player.up) {
+                target = new Position(player.pos.x, player.pos.y + 1);
+            } else if (key == player.down) {
+                target = new Position(player.pos.x, player.pos.y - 1);
+            }
 
-        if (target != null && isFloor(target)) {
-            swapTile(player, target);
-            player = target;
+            if (target != null && isFloor(target)) {
+                swapTile(player.pos, target);
+                player.pos = target;
+            }
         }
     }
 
@@ -181,6 +205,10 @@ public class World implements Serializable {
         board[p2.x][p2.y] = tile;
     }
 
+    public TETile[][] getBoard() {
+        return board;
+    }
+
     /**
      * The random object we will use to generate the world.
      */
@@ -189,12 +217,12 @@ public class World implements Serializable {
     /**
      * The grid.
      */
-    TETile[][] board;
+    private final TETile[][] board;
 
     /**
      * The position of player.
      */
-    Position player;
+    private List<Player> players;
 
     public static void main(String[] args) {
         TERenderer renderer;

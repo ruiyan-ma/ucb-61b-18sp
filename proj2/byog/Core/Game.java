@@ -109,11 +109,12 @@ public class Game {
      */
     private void playGame(World world) {
         ter.initialize(WIDTH, HEIGHT);
-        ter.renderFrame(world.board);
+        ter.renderFrame(world.getBoard());
 
         char prevKey = ' ';
         while (true) {
             headsUpDisplay(world);
+
             if (StdDraw.hasNextKeyTyped()) {
                 char key = Character.toLowerCase(StdDraw.nextKeyTyped());
 
@@ -124,7 +125,7 @@ public class Game {
                     }
                 } else {
                     world.movePlayer(key);
-                    ter.renderFrame(world.board);
+                    ter.renderFrame(world.getBoard());
                 }
 
                 prevKey = key;
@@ -140,13 +141,13 @@ public class Game {
         int x = (int) StdDraw.mouseX();
         int y = (int) StdDraw.mouseY();
         if (x >= 0 && x < WIDTH && y >= 0 && y < HEIGHT) {
-            String tileInfo = world.board[x][y].description();
+            String tileInfo = world.getBoard()[x][y].description();
             StdDraw.textLeft(0, 29, tileInfo);
         }
 
         StdDraw.enableDoubleBuffering();
         StdDraw.show();
-        ter.renderFrame(world.board);
+        ter.renderFrame(world.getBoard());
     }
 
     /**
@@ -168,13 +169,13 @@ public class Game {
         // drawn if the same inputs had been given to playWithKeyboard().
 
         input = input.toLowerCase();
-        World board = setUpWorld(input);
-        moveByInput(board, input);
+        World world = setUpWorld(input);
+        moveByInput(world, input);
         if (input.indexOf(":q") > 0) {
-            saveGame(board);
+            saveGame(world);
         }
 
-        return board.board;
+        return world.getBoard();
     }
 
     /**
@@ -184,18 +185,18 @@ public class Game {
      * @return the world.
      */
     private World setUpWorld(String input) {
-        World board;
+        World world;
         if (input.charAt(0) == 'n') {
             int endIndex = input.indexOf("s");
             long seed = Long.parseLong(input.substring(1, endIndex));
-            board = new World(seed);
+            world = new World(seed);
         } else if (input.charAt(0) == 'l') {
-            board = loadGame();
+            world = loadGame();
         } else {
             throw new IllegalArgumentException("Input must start with N or L!");
         }
 
-        return board;
+        return world;
     }
 
     /**
