@@ -38,10 +38,9 @@ public class Router {
         class NodeComparator implements Comparator<Long> {
             @Override
             public int compare(Long id1, Long id2) {
-//                double d1 = distTo.get(id1) + g.distance(id1, end);
-//                double d2 = distTo.get(id2) + g.distance(id2, end);
-//                return (int) (d1 - d2);
-                return (int) (distTo.get(id1) - distTo.get(id2));
+                double d1 = distTo.get(id1) + g.distance(id1, end);
+                double d2 = distTo.get(id2) + g.distance(id2, end);
+                return Double.compare(d1, d2);
             }
         }
 
@@ -55,13 +54,13 @@ public class Router {
                 break;
             }
 
-            for (long adj : g.adjacent(id)) {
-                double dist = distTo.get(id) + g.distance(id, adj);
-                if (dist < distTo.get(adj)) {
-                    distTo.put(adj, dist);
-                    edgeTo.put(adj, id);
-                    queue.remove(adj);
-                    queue.add(adj);
+            for (long next : g.adjacent(id)) {
+                double dist = distTo.get(id) + g.distance(id, next);
+                if (dist < distTo.get(next)) {
+                    distTo.put(next, dist);
+                    edgeTo.put(next, id);
+                    queue.remove(next);
+                    queue.add(next);
                 }
             }
         }
