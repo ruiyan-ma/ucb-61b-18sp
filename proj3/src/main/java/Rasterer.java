@@ -14,7 +14,6 @@ public class Rasterer {
     public static final double ROOT_MAX_LON = MapServer.ROOT_LRLON;
     public static final double ROOT_MIN_LAT = MapServer.ROOT_LRLAT;
     public static final double ROOT_MAX_LAT = MapServer.ROOT_ULLAT;
-//    public static final double OFFSET = 0.03;
 
     public Rasterer() {
     }
@@ -112,10 +111,8 @@ public class Rasterer {
      */
     private boolean checkQuery(double minLon, double maxLon, double minLat, double maxLat) {
         return minLon < maxLon && minLat < maxLat
-//                && minLon >= ROOT_MIN_LON - OFFSET && maxLon <= ROOT_MAX_LON + OFFSET
-//                && minLat >= ROOT_MIN_LAT - OFFSET && maxLat <= ROOT_MAX_LAT + OFFSET;
-                && minLon < ROOT_MAX_LON && maxLon >= ROOT_MIN_LON
-                && minLat < ROOT_MAX_LAT && maxLat >= ROOT_MIN_LAT;
+                && minLon < ROOT_MAX_LON && maxLon > ROOT_MIN_LON
+                && minLat < ROOT_MAX_LAT && maxLat > ROOT_MIN_LAT;
     }
 
     /**
