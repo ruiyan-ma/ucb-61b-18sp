@@ -80,6 +80,8 @@ public class Rasterer {
         int y1 = (int) ((ROOT_MAX_LAT - queryMaxLat) / latDPT);
         int y2 = (int) ((ROOT_MAX_LAT - queryMinLat) / latDPT);
 
+        x1 = Math.max(0, x1);
+        y1 = Math.max(0, y1);
         x2 = (int) Math.min(Math.pow(2, depth) - 1, x2);
         y2 = (int) Math.min(Math.pow(2, depth) - 1, y2);
 

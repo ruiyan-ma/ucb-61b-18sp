@@ -46,6 +46,10 @@ public class GraphDB {
             this.name = name;
             this.maxSpeed = maxSpeed;
             this.nodeIds = nodeIds;
+
+            if (name == null) {
+                this.name = Router.NavigationDirection.UNKNOWN_ROAD;
+            }
         }
 
         long id;
@@ -91,6 +95,28 @@ public class GraphDB {
             n1.edges.put(id2, way);
             n2.edges.put(id1, way);
         }
+    }
+
+    /**
+     * Get the id of the way connects n1 and n2.
+     *
+     * @param n1: the first node.
+     * @param n2: the second node.
+     * @return the way id.
+     */
+    long getWayId(long n1, long n2) {
+        return vertices.get(n1).edges.get(n2).id;
+    }
+
+    /**
+     * Get the name of the way connects n1 and n2.
+     *
+     * @param n1: the first node.
+     * @param n2: the second node.
+     * @return the way name.
+     */
+    String getWayName(long n1, long n2) {
+        return vertices.get(n1).edges.get(n2).name;
     }
 
     /**

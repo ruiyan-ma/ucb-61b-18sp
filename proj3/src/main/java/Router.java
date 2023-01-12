@@ -86,7 +86,92 @@ public class Router {
      * route.
      */
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
-        return null; // FIXME
+        List<NavigationDirection> result = new ArrayList<>();
+
+        long firstNodeId = route.get(0);
+        long secondNodeId = route.get(1);
+
+        double distance = 0;
+        double prevBearing = g.bearing(firstNodeId, secondNodeId);
+        int direction = NavigationDirection.START;
+        String prevWayName = g.getWayName(firstNodeId, secondNodeId);
+
+        for (int i = 0; i < route.size() - 1; ++i) {
+            long n1 = route.get(i);
+            long n2 = route.get(i + 1);
+            double currBearing = g.bearing(n1, n2);
+            String currWayName = g.getWayName(n1, n2);
+
+            if (currWayName.equals(prevWayName)) {
+                distance += g.distance(n1, n2);
+            } else {
+                NavigationDirection navigation = new NavigationDirection();
+                navigation.direction = direction;
+                navigation.distance = distance;
+                navigation.way = prevWayName;
+                result.add(navigation);
+
+                direction = getDirection(prevBearing, currBearing);
+                distance = g.distance(n1, n2);
+                prevWayName = g.getWayName(n1, n2);
+            }
+
+            // update the bearing
+            prevBearing = currBearing;
+        }
+
+        // add the last navigation direction
+        NavigationDirection navigation = new NavigationDirection();
+        navigation.direction = direction;
+        navigation.distance = distance;
+        navigation.way = prevWayName;
+        result.add(navigation);
+
+        return result;
+    }
+
+    /**
+     * Get the next direction based on previous bearing angle and current bearing angle.
+     * - Between -15 and 15 degrees the direction should be “Continue straight”.
+     * - Beyond -15 and 15 degrees but between -30 and 30 degrees the direction should be “Slight left/right”.
+     * - Beyond -30 and 30 degrees but between -100 and 100 degrees the direction should be “Turn left/right”.
+     * - Beyond -100 and 100 degrees the direction should be “Sharp left/right”.
+     *
+     * @param prevBearing: the previous bearing angle.
+     * @param currBearing: the current bearing angle.
+     * @return the next direction.
+     */
+    private static int getDirection(double prevBearing, double currBearing) {
+        double diff = round(currBearing - prevBearing);
+        double absDiff = Math.abs(diff);
+
+        if (absDiff < 15) {
+            return NavigationDirection.STRAIGHT;
+        } else if (absDiff < 30) {
+            return diff > 0 ? NavigationDirection.SLIGHT_RIGHT : NavigationDirection.SLIGHT_LEFT;
+        } else if (absDiff < 100) {
+            return diff > 0 ? NavigationDirection.RIGHT : NavigationDirection.LEFT;
+        } else {
+            return diff > 0 ? NavigationDirection.SHARP_RIGHT : NavigationDirection.SHARP_LEFT;
+        }
+    }
+
+    /**
+     * Round the angle in [-180, 180].
+     *
+     * @param angle: the angle.
+     * @return the angle after rounding.
+     */
+    private static double round(double angle) {
+        while (angle < -180) {
+            angle += 360;
+        }
+
+        while (angle > 180) {
+            angle -= 360;
+        }
+
+        return angle;
     }
 
 
