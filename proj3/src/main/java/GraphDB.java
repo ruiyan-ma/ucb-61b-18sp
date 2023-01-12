@@ -112,7 +112,7 @@ public class GraphDB {
     }
 
     /**
-     * Search all locations names with a given prefix.
+     * Get all locations names with a given prefix.
      *
      * @param prefix: the given prefix.
      * @return all location names.
@@ -126,9 +126,9 @@ public class GraphDB {
     }
 
     /**
-     * Seach all locations information with a given name.
+     * Get all locations information with a given name.
      * @param name: the location name.
-     * @return all informations.
+     * @return all location information.
      */
     List<Map<String, Object>> getLocations(String name) {
         List<Map<String, Object>> infos = new ArrayList<>();
