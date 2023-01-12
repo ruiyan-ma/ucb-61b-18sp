@@ -132,7 +132,7 @@ public class GraphDB {
      */
     List<Map<String, Object>> getLocations(String name) {
         List<Map<String, Object>> infos = new ArrayList<>();
-        for (Location location : trie.searchPrefix(name)) {
+        for (Location location : trie.searchLocation(name)) {
             infos.add(location.getInfo());
         }
         return infos;

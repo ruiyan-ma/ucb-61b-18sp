@@ -32,19 +32,19 @@ public class Trie {
      * Search the given location name in this trie.
      *
      * @param name: the given name.
-     * @return true if we have this location.
+     * @return all locations with the given name.
      */
-    public boolean search(String name) {
+    public List<Location> searchLocation(String name) {
         TrieNode node = root;
         for (char c : name.toCharArray()) {
             if (node.next.containsKey(c)) {
                 node = node.next.get(c);
             } else {
-                return false;
+                return new ArrayList<>();
             }
         }
 
-        return node.locations.size() > 0;
+        return node.locations;
     }
 
     /**
