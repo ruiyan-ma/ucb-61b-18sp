@@ -297,7 +297,7 @@ public class MapServer {
      * cleaned <code>prefix</code>.
      */
     public static List<String> getLocationsByPrefix(String prefix) {
-        return new LinkedList<>();
+        return graph.searchLocationName(prefix);
     }
 
     /**
@@ -314,7 +314,7 @@ public class MapServer {
      * "id" : Number, The id of the node. <br>
      */
     public static List<Map<String, Object>> getLocations(String locationName) {
-        return new LinkedList<>();
+        return graph.searchLocationInfo(locationName);
     }
 
     /**

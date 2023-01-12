@@ -6,6 +6,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,7 +77,9 @@ public class GraphDB {
      * @param name: the node name.
      */
     void setNodeName(long id, String name) {
-        vertices.get(id).name = name;
+        Node node = vertices.get(id);
+        node.name = name;
+        trie.add(cleanString(name), new Location(id, name, node.lon, node.lat));
     }
 
     /**
@@ -98,17 +101,6 @@ public class GraphDB {
     }
 
     /**
-     * Get the id of the way connects n1 and n2.
-     *
-     * @param n1: the first node.
-     * @param n2: the second node.
-     * @return the way id.
-     */
-    long getWayId(long n1, long n2) {
-        return vertices.get(n1).edges.get(n2).id;
-    }
-
-    /**
      * Get the name of the way connects n1 and n2.
      *
      * @param n1: the first node.
@@ -120,12 +112,41 @@ public class GraphDB {
     }
 
     /**
-     * Your instance variables for storing the graph. You should consider
-     * creating helper classes, e.g. Node, Edge, etc.
-     * <p>
+     * Search all locations names with a given prefix.
+     *
+     * @param prefix: the given prefix.
+     * @return all location names.
+     */
+    List<String> searchLocationName(String prefix) {
+        List<String> names = new ArrayList<>();
+        for (Location location : trie.searchPrefix(prefix)) {
+            names.add(location.name);
+        }
+        return names;
+    }
+
+    /**
+     * Seach all locations information with a given name.
+     * @param name: the location name.
+     * @return all informations.
+     */
+    List<Map<String, Object>> searchLocationInfo(String name) {
+        List<Map<String, Object>> infos = new ArrayList<>();
+        for (Location location : trie.searchPrefix(name)) {
+            infos.add(location.getInfo());
+        }
+        return infos;
+    }
+
+    /**
      * A map contains (node id, node) pairs.
      */
     private Map<Long, Node> vertices = new LinkedHashMap<>();
+
+    /**
+     * A trie helps search location.
+     */
+    private final Trie trie = new Trie();
 
     /**
      * Example constructor shows how to create and start an XML parser.
