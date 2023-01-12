@@ -117,7 +117,7 @@ public class GraphDB {
      * @param prefix: the given prefix.
      * @return all location names.
      */
-    List<String> searchLocationName(String prefix) {
+    List<String> getLocationsByPrefix(String prefix) {
         List<String> names = new ArrayList<>();
         for (Location location : trie.searchPrefix(prefix)) {
             names.add(location.name);
@@ -130,7 +130,7 @@ public class GraphDB {
      * @param name: the location name.
      * @return all informations.
      */
-    List<Map<String, Object>> searchLocationInfo(String name) {
+    List<Map<String, Object>> getLocations(String name) {
         List<Map<String, Object>> infos = new ArrayList<>();
         for (Location location : trie.searchPrefix(name)) {
             infos.add(location.getInfo());

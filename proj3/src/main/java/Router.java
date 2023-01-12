@@ -88,6 +88,10 @@ public class Router {
     public static List<NavigationDirection> routeDirections(GraphDB g, List<Long> route) {
         List<NavigationDirection> result = new ArrayList<>();
 
+        if (route.size() < 2) {
+            return result;
+        }
+
         long firstNodeId = route.get(0);
         long secondNodeId = route.get(1);
 
